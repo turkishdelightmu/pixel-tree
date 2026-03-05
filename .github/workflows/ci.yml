@@ -52,7 +52,7 @@ jobs:
         env:
           # Provide placeholder secrets so the build doesn't crash at
           # import-time.  Real values are only needed at runtime.
-          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          GH_PAT: ${{ secrets.GH_PAT }}
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
           NEXT_PUBLIC_BASE_URL: https://pixel-tree.vercel.app

@@ -72,7 +72,7 @@ export async function fetchContributions(username: string): Promise<number> {
     throw new GitHubError(400, 'Invalid username format')
   }
 
-  const token = process.env.GITHUB_PAT
+  const token = process.env.GH_PAT
   if (!token || token === 'your_github_pat_here') {
     throw new GitHubError(500, 'GitHub PAT not configured')
   }

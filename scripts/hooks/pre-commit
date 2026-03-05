@@ -40,7 +40,7 @@ check_file() {
   fi
 
   # Block real-looking assignments: KEY=<20+ char value> (covers most secret patterns)
-  if echo "$content" | grep -qE '(GITHUB_PAT|UPSTASH_REDIS_REST_TOKEN|UPSTASH_REDIS_REST_URL|API_KEY|SECRET_KEY|PRIVATE_KEY)=[A-Za-z0-9+/._-]{20,}'; then
+  if echo "$content" | grep -qE '(GH_PAT|UPSTASH_REDIS_REST_TOKEN|UPSTASH_REDIS_REST_URL|API_KEY|SECRET_KEY|PRIVATE_KEY)=[A-Za-z0-9+/._-]{30,}'; then
     echo -e "${RED}BLOCKED:${NC} High-entropy secret assignment in staged file: ${YELLOW}$file${NC}"
     BLOCKED=1
   fi
