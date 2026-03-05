@@ -30,7 +30,7 @@ Pixel Tree fetches your last year of GitHub activity and visualizes it as a st
 
 ## 🎬 Demo / GIF Preview
 
-![Pixel Tree Demo](https://github.com/turkishdelightmu/pixel-tree/blob/main/demo.gif)  
+![Pixel Tree Demo](https://github.com/turkishdelightmu/pixel-tree/blob/main/ScreenRecording2026-03-05at18.54.29-ezgif.com-video-to-gif-converter.gif)  
 _Watch how your contributions grow into a tree!_
 
 ## 🌳 Tier Breakdown
