@@ -383,7 +383,7 @@ export default function HomePage() {
 
       {/* DIVIDER */}
       <div style={DIVIDER_STYLE} />
-      <p className="font-pixel text-[10px] text-muted tracking-[3px] text-center mb-10">// ALL TREE TIERS //</p>
+      <p className="font-pixel text-[10px] text-muted tracking-[3px] text-center mb-10">{'// ALL TREE TIERS //'}</p>
 
       {/* TREE TIER GRID */}
       <div className="grid grid-cols-3 gap-5 mb-[70px] max-[750px]:grid-cols-2">
@@ -412,7 +412,7 @@ export default function HomePage() {
 
       {/* DIVIDER */}
       <div style={DIVIDER_STYLE} />
-      <p id="how-it-works" className="font-pixel text-[10px] text-muted tracking-[3px] text-center mb-10">// HOW IT WORKS //</p>
+      <p id="how-it-works" className="font-pixel text-[10px] text-muted tracking-[3px] text-center mb-10">{'// HOW IT WORKS //'}</p>
 
       {/* STEPS */}
       <div className="grid grid-cols-3 gap-4 mb-[70px] max-[600px]:grid-cols-1">
