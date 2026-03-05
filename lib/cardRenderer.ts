@@ -1,4 +1,5 @@
 import { createCanvas } from 'canvas';
+import type { CanvasRenderingContext2D } from 'canvas';
 import { drawTree } from './trees';
 
 type CardSize = 'sm' | 'md';
@@ -14,9 +15,82 @@ const TREE_NAMES = ['BARE TREE', 'SAKURA TREE', 'WILLOW TREE', 'OAK TREE', 'REDW
 const TREE_COLORS = ['#aac4d8', '#ff9ec7', '#7dd9a8', '#d4a017', '#ff6030', '#c060ff'] as const;
 
 const SIZE_PRESETS: Record<CardSize, { width: number; height: number; treeScale: number }> = {
-  sm: { width: 560, height: 180, treeScale: 2 },
-  md: { width: 720, height: 220, treeScale: 2 },
+  // 64x80 tree at 2x scale needs at least 160px vertical space plus margins.
+  sm: { width: 600, height: 208, treeScale: 2 },
+  md: { width: 760, height: 232, treeScale: 2 },
 };
+
+// 5x7 pixel font so README card text is deterministic on any server runtime.
+const GLYPHS: Record<string, string[]> = {
+  'A': ['01110', '10001', '10001', '11111', '10001', '10001', '10001'],
+  'B': ['11110', '10001', '10001', '11110', '10001', '10001', '11110'],
+  'C': ['01111', '10000', '10000', '10000', '10000', '10000', '01111'],
+  'D': ['11110', '10001', '10001', '10001', '10001', '10001', '11110'],
+  'E': ['11111', '10000', '10000', '11110', '10000', '10000', '11111'],
+  'F': ['11111', '10000', '10000', '11110', '10000', '10000', '10000'],
+  'G': ['01111', '10000', '10000', '10011', '10001', '10001', '01110'],
+  'H': ['10001', '10001', '10001', '11111', '10001', '10001', '10001'],
+  'I': ['11111', '00100', '00100', '00100', '00100', '00100', '11111'],
+  'J': ['00111', '00010', '00010', '00010', '10010', '10010', '01100'],
+  'K': ['10001', '10010', '10100', '11000', '10100', '10010', '10001'],
+  'L': ['10000', '10000', '10000', '10000', '10000', '10000', '11111'],
+  'M': ['10001', '11011', '10101', '10101', '10001', '10001', '10001'],
+  'N': ['10001', '11001', '10101', '10011', '10001', '10001', '10001'],
+  'O': ['01110', '10001', '10001', '10001', '10001', '10001', '01110'],
+  'P': ['11110', '10001', '10001', '11110', '10000', '10000', '10000'],
+  'Q': ['01110', '10001', '10001', '10001', '10101', '10010', '01101'],
+  'R': ['11110', '10001', '10001', '11110', '10100', '10010', '10001'],
+  'S': ['01111', '10000', '10000', '01110', '00001', '00001', '11110'],
+  'T': ['11111', '00100', '00100', '00100', '00100', '00100', '00100'],
+  'U': ['10001', '10001', '10001', '10001', '10001', '10001', '01110'],
+  'V': ['10001', '10001', '10001', '10001', '10001', '01010', '00100'],
+  'W': ['10001', '10001', '10001', '10101', '10101', '10101', '01010'],
+  'X': ['10001', '10001', '01010', '00100', '01010', '10001', '10001'],
+  'Y': ['10001', '10001', '01010', '00100', '00100', '00100', '00100'],
+  'Z': ['11111', '00001', '00010', '00100', '01000', '10000', '11111'],
+  '0': ['01110', '10001', '10011', '10101', '11001', '10001', '01110'],
+  '1': ['00100', '01100', '00100', '00100', '00100', '00100', '01110'],
+  '2': ['01110', '10001', '00001', '00010', '00100', '01000', '11111'],
+  '3': ['11110', '00001', '00001', '01110', '00001', '00001', '11110'],
+  '4': ['00010', '00110', '01010', '10010', '11111', '00010', '00010'],
+  '5': ['11111', '10000', '10000', '11110', '00001', '00001', '11110'],
+  '6': ['01110', '10000', '10000', '11110', '10001', '10001', '01110'],
+  '7': ['11111', '00001', '00010', '00100', '01000', '01000', '01000'],
+  '8': ['01110', '10001', '10001', '01110', '10001', '10001', '01110'],
+  '9': ['01110', '10001', '10001', '01111', '00001', '00001', '01110'],
+  '@': ['01110', '10001', '10111', '10101', '10111', '10000', '01111'],
+  '/': ['00001', '00010', '00010', '00100', '01000', '01000', '10000'],
+  '-': ['00000', '00000', '00000', '11111', '00000', '00000', '00000'],
+  ',': ['00000', '00000', '00000', '00000', '00110', '00100', '01000'],
+  '.': ['00000', '00000', '00000', '00000', '00000', '01100', '01100'],
+  ' ': ['00000', '00000', '00000', '00000', '00000', '00000', '00000'],
+};
+
+function drawPixelText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  color: string,
+  scale = 2,
+  letterGap = 1,
+): void {
+  const up = text.toUpperCase();
+  ctx.fillStyle = color;
+
+  let cx = x;
+  for (const ch of up) {
+    const glyph = GLYPHS[ch] ?? GLYPHS[' '];
+    for (let row = 0; row < glyph.length; row += 1) {
+      for (let col = 0; col < glyph[row].length; col += 1) {
+        if (glyph[row][col] === '1') {
+          ctx.fillRect(cx + col * scale, y + row * scale, scale, scale);
+        }
+      }
+    }
+    cx += 5 * scale + letterGap;
+  }
+}
 
 export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer> {
   const size = options.size ?? 'sm';
@@ -44,7 +118,7 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   // Tree frame
   const treeFrameX = 16;
   const treeFrameY = 16;
-  const treeFrameW = 152;
+  const treeFrameW = 160;
   const treeFrameH = preset.height - 32;
 
   ctx.fillStyle = '#050a14';
@@ -53,8 +127,8 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   ctx.strokeRect(treeFrameX, treeFrameY, treeFrameW, treeFrameH);
 
   // Draw pixel tree (64x80 @ 2x = 128x160)
-  const treeX = treeFrameX + 12;
-  const treeY = treeFrameY + 8;
+  const treeX = treeFrameX + 16;
+  const treeY = treeFrameY + 16;
   ctx.save();
   ctx.translate(treeX, treeY);
   ctx.scale(preset.treeScale, preset.treeScale);
@@ -62,21 +136,16 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   ctx.restore();
 
   // Text area
-  const infoX = treeFrameX + treeFrameW + 18;
+  const infoX = treeFrameX + treeFrameW + 16;
   const titleColor = TREE_COLORS[tier];
 
-  ctx.fillStyle = titleColor;
-  ctx.font = "bold 20px 'Courier New', monospace";
-  ctx.fillText(TREE_NAMES[tier], infoX, 40);
-
-  ctx.fillStyle = '#6a9fd8';
-  ctx.font = "16px 'Courier New', monospace";
-  ctx.fillText(`@${options.username}`, infoX, 68);
+  drawPixelText(ctx, TREE_NAMES[tier], infoX, 26, titleColor, 2, 2);
+  drawPixelText(ctx, `@${options.username}`, infoX, 54, '#6a9fd8', 2, 1);
 
   // Stats blocks
-  const statTop = 88;
-  const statW = 112;
-  const statH = 56;
+  const statTop = 86;
+  const statW = size === 'sm' ? 128 : 146;
+  const statH = 58;
   const statGap = 12;
 
   const stats: Array<{ label: string; value: string }> = [
@@ -93,19 +162,12 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
     ctx.strokeStyle = '#1e2d50';
     ctx.strokeRect(x, statTop, statW, statH);
 
-    ctx.fillStyle = '#6a9fd8';
-    ctx.font = "10px 'Courier New', monospace";
-    ctx.fillText(stat.label, x + 8, statTop + 18);
-
-    ctx.fillStyle = '#00ff9d';
-    ctx.font = "bold 24px 'Courier New', monospace";
-    ctx.fillText(stat.value, x + 8, statTop + 43);
+    drawPixelText(ctx, stat.label, x + 8, statTop + 8, '#6a9fd8', 1, 1);
+    drawPixelText(ctx, stat.value, x + 8, statTop + 26, '#00ff9d', 2, 1);
   });
 
   // Footer signature for readability in README
-  ctx.fillStyle = '#4a6080';
-  ctx.font = "12px 'Courier New', monospace";
-  ctx.fillText('github pixel tree', infoX, preset.height - 16);
+  drawPixelText(ctx, 'GITHUB PIXEL TREE', infoX, preset.height - 22, '#4a6080', 1, 1);
 
   return canvas.toBuffer('image/png');
 }
