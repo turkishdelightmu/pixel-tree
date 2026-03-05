@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/Screenshot%202026-03-05%20at%2017.21.02.png" alt="main-image">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/background.png" alt="main-image">
   </a>
 </p>
 
