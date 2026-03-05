@@ -151,6 +151,51 @@ function drawWrappedPixelText(
   }
 }
 
+function drawWrappedSansText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  color: string,
+  maxWidth: number,
+  maxLines: number,
+  fontSize: number,
+  lineHeight: number,
+): void {
+  const normalized = text.replace(/\s+/g, ' ').trim();
+  if (!normalized) return;
+
+  ctx.save();
+  ctx.fillStyle = color;
+  ctx.font = `${fontSize}px "DM Sans", sans-serif`;
+  ctx.textBaseline = 'top';
+
+  const words = normalized.split(' ');
+  const lines: string[] = [];
+  let current = '';
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (ctx.measureText(candidate).width <= maxWidth) {
+      current = candidate;
+    } else {
+      if (current) lines.push(current);
+      current = word;
+      if (lines.length >= maxLines) break;
+    }
+  }
+
+  if (current && lines.length < maxLines) {
+    lines.push(current);
+  }
+
+  for (let i = 0; i < Math.min(lines.length, maxLines); i += 1) {
+    ctx.fillText(lines[i], x, y + i * lineHeight);
+  }
+
+  ctx.restore();
+}
+
 export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer> {
   const size = options.size ?? 'sm';
   const preset = SIZE_PRESETS[size];
@@ -233,16 +278,16 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   // Compact card gets 2 lines; medium gets 3 lines.
   const descY = statTop + statH + (isCompact ? 8 : 10);
   const descMaxWidth = preset.width - infoX - rightPadding;
-  drawWrappedPixelText(
+  drawWrappedSansText(
     ctx,
     TREE_DESCRIPTIONS[tier],
     infoX,
     descY,
-    '#6a9fd8',
+    '#c8d8f0',
     descMaxWidth,
     isCompact ? 2 : 3,
-    1,
-    1,
+    isCompact ? 12 : 16,
+    isCompact ? 12 : 20,
   );
 
   // Footer signature for readability in README
