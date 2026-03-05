@@ -320,8 +320,8 @@ export default function HomePage() {
           YOUR COMMITS<br />
           <span className="text-accent">GROW A TREE</span>
         </h1>
-        <p className="text-muted max-w-[760px] mx-auto mb-9 leading-[1.65]"
-           style={{ fontSize: 'clamp(16px,1.8vw,22px)' }}>
+          <p className="text-muted max-w-[680px] mx-auto mb-9 leading-[1.7]"
+            style={{ fontSize: 'clamp(14px,1.25vw,18px)' }}>
           Drop your GitHub username and watch your contribution history bloom into a unique pixel art tree. Embed it in any README.
         </p>
       </section>
