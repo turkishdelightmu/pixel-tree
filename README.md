@@ -10,7 +10,7 @@
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree/stargazers">
-    <img src="https://img.shields.io/github/stars/turkishdelightmu/pixel-tree?style=social" alt="Stars">
+  <img src="https://img.shields.io/github/stars/turkishdelightmu/pixel-tree?style=flat-square&logo=github&logoColor=white&label=Stars&color=black" alt="GitHub Stars">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree/network/members">
     <img src="https://img.shields.io/github/forks/turkishdelightmu/pixel-tree.svg?style=flat-square&label=Forks" alt="Forks">
