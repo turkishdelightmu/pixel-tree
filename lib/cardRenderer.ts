@@ -33,8 +33,8 @@ const SIZE_PRESETS: Record<CardSize, { width: number; height: number; treeScale:
 
 let dmSansRegistered = false;
 
-function ensureDmSansFontRegistered(): void {
-  if (dmSansRegistered) return;
+function ensureDmSansFontRegistered(): boolean {
+  if (dmSansRegistered) return true;
 
   const dmSansTtfPath = path.join(
     process.cwd(),
@@ -43,7 +43,7 @@ function ensureDmSansFontRegistered(): void {
     'DMSans-Regular.ttf',
   );
 
-  if (!existsSync(dmSansTtfPath)) return;
+  if (!existsSync(dmSansTtfPath)) return false;
 
   try {
     registerFont(dmSansTtfPath, {
@@ -54,7 +54,10 @@ function ensureDmSansFontRegistered(): void {
     dmSansRegistered = true;
   } catch {
     // Keep rendering even if font registration fails in a constrained runtime.
+    return false;
   }
+
+  return true;
 }
 
 // 5x7 pixel font so README card text is deterministic on any server runtime.
@@ -147,7 +150,9 @@ function drawWrappedSansText(
 
   ctx.save();
   ctx.fillStyle = color;
-  ctx.font = `${fontSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
+  ctx.font = dmSansRegistered
+    ? `${fontSize}px "DM Sans"`
+    : `${fontSize}px sans-serif`;
   ctx.textBaseline = 'top';
 
   const words = normalized.split(' ');
