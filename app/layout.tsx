@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Press_Start_2P, VT323, Outfit } from 'next/font/google';
+import { Press_Start_2P, VT323, DM_Sans } from 'next/font/google';
 import './globals.css';
 
 const pressStart2P = Press_Start_2P({
@@ -16,7 +16,7 @@ const vt323 = VT323({
   display: 'swap',
 });
 
-const outfit = Outfit({
+const dmSans = DM_Sans({
   subsets: ['latin'],
   variable: '--font-body',
   display: 'swap',
@@ -37,7 +37,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${pressStart2P.variable} ${vt323.variable} ${outfit.variable}`}>
+    <html lang="en" className={`${pressStart2P.variable} ${vt323.variable} ${dmSans.variable}`}>
       <body className="bg-bg text-text font-body antialiased">
         {children}
       </body>

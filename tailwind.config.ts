@@ -19,7 +19,7 @@ const config: Config = {
       fontFamily: {
         pixel: ['"Press Start 2P"', 'monospace'],
         vt:    ['VT323', 'monospace'],
-        body:  ['Outfit', 'sans-serif'],
+        body:  ['"DM Sans"', 'sans-serif'],
       },
     },
   },

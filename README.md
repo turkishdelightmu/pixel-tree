@@ -1,8 +1,10 @@
 # GitHub Pixel Tree
 
 <p align="center">
+  <a href="https://github.com/turkishdelightmu/pixel-tree">
     <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/Screenshot%202026-03-05%20at%2017.21.02.png" alt="main-image">
   </a>
+</p>
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree/stargazers">
@@ -26,25 +28,21 @@ Turn your **GitHub contributions** into a **pixel-art tree** 🌳 — with both 
 
 Pixel Tree fetches your last year of GitHub activity and visualizes it as a stylized pixel tree. Whether you’re casually contributing or coding like a wizard, there’s a tree waiting for you.
 
-
-
 ## 🎬 Demo / GIF Preview
 
 ![Pixel Tree Demo](https://user-images.githubusercontent.com/<your_gif_here>.gif)  
-*Watch how your contributions grow into a tree!*
-
+_Watch how your contributions grow into a tree!_
 
 ## 🌳 Tier Breakdown
 
-| Tier | Contributions | Tree Type      |
-|------|---------------|----------------|
-| 0    | 0–49          | Bare Tree      |
-| 1    | 50–199        | Sakura Tree    |
-| 2    | 200–499       | Willow Tree    |
-| 3    | 500–999       | Oak Tree       |
-| 4    | 1000–1999     | Redwood        |
-| 5    | 2000+         | Crystal Tree   |
-
+| Tier | Contributions | Tree Type    |
+| ---- | ------------- | ------------ |
+| 0    | 0–49          | Bare Tree    |
+| 1    | 50–199        | Sakura Tree  |
+| 2    | 200–499       | Willow Tree  |
+| 3    | 500–999       | Oak Tree     |
+| 4    | 1000–1999     | Redwood      |
+| 5    | 2000+         | Crystal Tree |
 
 ## 🚀 Quick Start
 
@@ -64,7 +62,6 @@ TIER_BOUNDARIES=0,50,200,500,1000,2000
 ```
 
 Visit `http://localhost:3000` to preview your pixel tree 🌱
-
 
 ## 📷 API Usage
 
@@ -86,23 +83,16 @@ https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu
 ![GitHub Pixel Tree Card](https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card)
 ```
 
-
 ## 💖 Contributing
 
 PRs, ideas, and tweaks are welcome! Let’s **grow this pixel forest** together 🌳✨
 
-
 ## 📦 Built With
 
-* **Next.js**
-* **GitHub GraphQL API**
-* **Upstash Redis** 
-
+- **Next.js**
+- **GitHub GraphQL API**
+- **Upstash Redis**
 
 ## 📝 License
 
 MIT License © 2026 [turkishdelightmu](https://github.com/turkishdelightmu)
-
-
-
-
