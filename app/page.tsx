@@ -457,7 +457,7 @@ export default function HomePage() {
       {/* FOOTER */}
       <footer className="border-t border-border py-6 flex items-center justify-between text-[12px] text-muted">
         <span className="font-pixel text-[8px] text-accent">PIXEL TREE</span>
-        <span>© 2025 Pixel Tree Studio</span>
+        <span>turkishdelightmu</span>
       </footer>
 
     </div>
