@@ -103,54 +103,6 @@ function drawPixelText(
   }
 }
 
-function normalizePixelText(input: string): string {
-  return input
-    .replace(/[\u2013\u2014]/g, '-')
-    .replace(/[^a-zA-Z0-9@/\-.,:'\s]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-function measurePixelTextWidth(text: string, scale = 2, letterGap = 1): number {
-  if (!text.length) return 0;
-  return text.length * (5 * scale + letterGap) - letterGap;
-}
-
-function drawWrappedPixelText(
-  ctx: CanvasRenderingContext2D,
-  text: string,
-  x: number,
-  y: number,
-  color: string,
-  maxWidth: number,
-  maxLines: number,
-  scale = 1,
-  letterGap = 1,
-): void {
-  const normalized = normalizePixelText(text).toUpperCase();
-  if (!normalized) return;
-
-  const words = normalized.split(' ');
-  const lines: string[] = [];
-  let current = '';
-
-  for (const word of words) {
-    const candidate = current ? `${current} ${word}` : word;
-    if (measurePixelTextWidth(candidate, scale, letterGap) <= maxWidth) {
-      current = candidate;
-    } else {
-      if (current) lines.push(current);
-      current = word;
-      if (lines.length >= maxLines) break;
-    }
-  }
-  if (current && lines.length < maxLines) lines.push(current);
-
-  for (let i = 0; i < Math.min(lines.length, maxLines); i += 1) {
-    drawPixelText(ctx, lines[i], x, y + i * (8 * scale), color, scale, letterGap);
-  }
-}
-
 function drawWrappedSansText(
   ctx: CanvasRenderingContext2D,
   text: string,
