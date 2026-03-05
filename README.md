@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/background.png" alt="main-image">
+    <img src="[/assets/trees/background.png](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/background.png)" alt="main-image">
   </a>
 </p>
 
@@ -37,7 +37,7 @@ _Watch how your contributions grow into a tree!_
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/tree-tiers.png" alt="tree-tier">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/tree-tier.png" alt="tree-tier">
   </a>
 </p>
 
@@ -45,22 +45,22 @@ _Watch how your contributions grow into a tree!_
 
 <p align="left">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/bare.png" alt="bare-tree" width="700">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/bare.png" alt="bare-tree" width="700">
   </a>
    <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/sakura.png" alt="sakura-tree" width="700">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/sakura.png" alt="sakura-tree" width="700">
   </a>
    <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/willow.png" alt="willow-tree" width="700">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/willow.png" alt="willow-tree" width="700">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/oak.png" alt="oak-tree" width="700">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/oak.png" alt="oak-tree" width="700">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/redwood.png" alt="redwood-tree" width="700">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/redwood.png" alt="redwood-tree" width="700">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="/assets/trees/crystal.png" alt="crystal-tree" width="700">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/crystal.png" alt="crystal-tree" width="700">
   </a>
 </p>
 
