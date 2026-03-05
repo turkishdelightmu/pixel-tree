@@ -315,13 +315,13 @@ export default function HomePage() {
         <div className="font-pixel text-[8px] text-accent2 border border-accent2 inline-block px-[14px] py-[6px] mb-6 tracking-[2px] animate-pulse-glow">
           ✦ README WIDGET ✦
         </div>
-        <h1 className="font-pixel text-white mb-5 leading-[1.35]"
-            style={{ fontSize: 'clamp(30px,5.2vw,56px)' }}>
+        <h1 className="font-pixel text-white mb-5 leading-[1.4]"
+            style={{ fontSize: 'clamp(24px,4.2vw,44px)' }}>
           YOUR COMMITS<br />
           <span className="text-accent">GROW A TREE</span>
         </h1>
-        <p className="text-muted max-w-[820px] mx-auto mb-9 leading-[1.6]"
-           style={{ fontSize: 'clamp(20px,2.3vw,28px)' }}>
+        <p className="text-muted max-w-[760px] mx-auto mb-9 leading-[1.65]"
+           style={{ fontSize: 'clamp(16px,1.8vw,22px)' }}>
           Drop your GitHub username and watch your contribution history bloom into a unique pixel art tree. Embed it in any README.
         </p>
       </section>
