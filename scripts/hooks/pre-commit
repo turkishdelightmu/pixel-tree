@@ -13,13 +13,12 @@ NC='\033[0m'
 
 BLOCKED=0
 
-# Patterns to block
-# GitHub PATs (classic + fine-grained)
-PAT_PATTERN='ghp_[A-Za-z0-9]{36}|github_pat_[A-Za-z0-9_]{82}'
-# Upstash Redis tokens (long base64-like strings prefixed with known chars)
-UPSTASH_TOKEN_PATTERN='AeH[A-Za-z0-9+/]{20,}'
-# Generic high-entropy assignments: KEY="something_long_real"
-GENERIC_SECRET='(API_KEY|SECRET|TOKEN|PAT|PASSWORD|PRIVATE_KEY)\s*=\s*["\x27]?[A-Za-z0-9+/\-_]{20,}["\x27]?'
+# Patterns to block (grep -E: extended regex, cross-platform macOS + Linux)
+# GitHub PATs (classic: ghp_... and fine-grained: github_pat_...)
+PAT_CLASSIC='ghp_[A-Za-z0-9]{36}'
+PAT_FINE='github_pat_[A-Za-z0-9_]{82}'
+# Upstash Redis REST tokens start with AeH followed by long base64
+UPSTASH_TOKEN='AeH[A-Za-z0-9+/]{20,}'
 
 check_file() {
   local file="$1"
@@ -30,18 +29,24 @@ check_file() {
   local content
   content=$(git diff --cached -- "$file" | grep '^+' | grep -v '^+++')
 
-  if echo "$content" | grep -qP "$PAT_PATTERN"; then
+  if echo "$content" | grep -qE "$PAT_CLASSIC|$PAT_FINE"; then
     echo -e "${RED}BLOCKED:${NC} GitHub PAT detected in staged file: ${YELLOW}$file${NC}"
     BLOCKED=1
   fi
 
-  if echo "$content" | grep -qP "$UPSTASH_TOKEN_PATTERN"; then
+  if echo "$content" | grep -qE "$UPSTASH_TOKEN"; then
     echo -e "${RED}BLOCKED:${NC} Upstash token detected in staged file: ${YELLOW}$file${NC}"
     BLOCKED=1
   fi
 
-  # Check for .env files that should never be committed
-  if echo "$file" | grep -qP '^\.env(\.|$)' && echo "$file" | grep -qv '\.example$'; then
+  # Block real-looking assignments: KEY=<20+ char value> (covers most secret patterns)
+  if echo "$content" | grep -qE '(GITHUB_PAT|UPSTASH_REDIS_REST_TOKEN|UPSTASH_REDIS_REST_URL|API_KEY|SECRET_KEY|PRIVATE_KEY)=[A-Za-z0-9+/._-]{20,}'; then
+    echo -e "${RED}BLOCKED:${NC} High-entropy secret assignment in staged file: ${YELLOW}$file${NC}"
+    BLOCKED=1
+  fi
+
+  # Block .env files (except .env.example) from ever being committed
+  if echo "$file" | grep -qE '^\.env' && ! echo "$file" | grep -qE '\.example$'; then
     echo -e "${RED}BLOCKED:${NC} Attempted to commit an env file: ${YELLOW}$file${NC}"
     echo -e "  Only ${YELLOW}.env.example${NC} may be committed. Real env files are gitignored."
     BLOCKED=1
