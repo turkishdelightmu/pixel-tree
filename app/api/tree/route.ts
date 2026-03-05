@@ -106,13 +106,16 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   // ── 5. Return PNG with caching headers ────────────────────────────
   // NextResponse BodyInit requires Uint8Array/ArrayBuffer, not Node Buffer
+  const imageCacheControl = view === 'card'
+    ? 'public, max-age=60, stale-while-revalidate=300'
+    : 'public, max-age=3600, stale-while-revalidate=86400';
+
   return new NextResponse(new Uint8Array(png), {
     status: 200,
     headers: {
       'Content-Type': 'image/png',
       'Content-Length': String(png.length),
-      // Cache for 1 hour in browser / CDN edge; stale-while-revalidate up to 24h
-      'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+      'Cache-Control': imageCacheControl,
       'X-RateLimit-Remaining': String(remaining),
       'X-RateLimit-Reset': String(reset),
       // Tell GitHub (and anyone embedding) this is an image, never sniff
