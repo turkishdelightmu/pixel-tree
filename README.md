@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/background.png" alt="main-image">
+    <img src="/assets/trees/background.png" alt="main-image">
   </a>
 </p>
 
@@ -30,14 +30,14 @@ Pixel Tree fetches your last year of GitHub activity and visualizes it as a st
 
 ## 🎬 Demo / GIF Preview
 
-![Pixel Tree Demo](https://github.com/turkishdelightmu/pixel-tree/blob/main/ScreenRecording2026-03-05at18.54.29-ezgif.com-video-to-gif-converter.gif)  
+![Pixel Tree Demo](https://github.com/turkishdelightmu/pixel-tree/blob/main/demo.gif)  
 _Watch how your contributions grow into a tree!_
 
 ## 🌳 Tier Breakdown
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/tree-tiers.png" alt="tree-tier">
+    <img src="/assets/trees/tree-tiers.png" alt="tree-tier">
   </a>
 </p>
 
@@ -45,22 +45,22 @@ _Watch how your contributions grow into a tree!_
 
 <p align="left">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/bare.png" alt="bare-tree" width="700">
+    <img src="/assets/trees/bare.png" alt="bare-tree" width="700">
   </a>
    <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/sakura.png" alt="sakura-tree" width="700">
+    <img src="/assets/trees/sakura.png" alt="sakura-tree" width="700">
   </a>
    <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/willow.png" alt="willow-tree" width="700">
+    <img src="/assets/trees/willow.png" alt="willow-tree" width="700">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/oak.png" alt="oak-tree" width="700">
+    <img src="/assets/trees/oak.png" alt="oak-tree" width="700">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/redwood.png" alt="redwood-tree" width="700">
+    <img src="/assets/trees/redwood.png" alt="redwood-tree" width="700">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/crystal.png" alt="crystal-tree" width="700">
+    <img src="/assets/trees/crystal.png" alt="crystal-tree" width="700">
   </a>
 </p>
 

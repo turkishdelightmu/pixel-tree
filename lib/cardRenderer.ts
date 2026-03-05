@@ -1,4 +1,6 @@
-import { createCanvas } from 'canvas';
+import { existsSync } from 'node:fs';
+import path from 'node:path';
+import { createCanvas, registerFont } from 'canvas';
 import type { CanvasRenderingContext2D } from 'canvas';
 import { drawTree } from './trees';
 
@@ -28,6 +30,30 @@ const SIZE_PRESETS: Record<CardSize, { width: number; height: number; treeScale:
   // Rich preview card used by explicit size=md.
   md: { width: 760, height: 232, treeScale: 2 },
 };
+
+let dmSansRegistered = false;
+
+function ensureDmSansFontRegistered(): void {
+  if (dmSansRegistered) return;
+
+  const dmSansWoffPath = path.join(
+    process.cwd(),
+    'node_modules',
+    '@fontsource',
+    'dm-sans',
+    'files',
+    'dm-sans-latin-400-normal.woff',
+  );
+
+  if (!existsSync(dmSansWoffPath)) return;
+
+  try {
+    registerFont(dmSansWoffPath, { family: 'DM Sans' });
+    dmSansRegistered = true;
+  } catch {
+    // Keep rendering even if font registration fails in a constrained runtime.
+  }
+}
 
 // 5x7 pixel font so README card text is deterministic on any server runtime.
 const GLYPHS: Record<string, string[]> = {
@@ -119,7 +145,7 @@ function drawWrappedSansText(
 
   ctx.save();
   ctx.fillStyle = color;
-  ctx.font = `${fontSize}px "DM Sans"`;
+  ctx.font = `${fontSize}px "DM Sans", "Helvetica Neue", Arial, sans-serif`;
   ctx.textBaseline = 'top';
 
   const words = normalized.split(' ');
@@ -149,6 +175,8 @@ function drawWrappedSansText(
 }
 
 export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer> {
+  ensureDmSansFontRegistered();
+
   const size = options.size ?? 'sm';
   const preset = SIZE_PRESETS[size];
   const tier = Math.max(0, Math.min(5, options.tier));

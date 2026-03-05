@@ -11,6 +11,7 @@
     "setup:hooks": "cp .git/hooks/pre-commit .git/hooks/pre-commit 2>/dev/null; chmod +x .git/hooks/pre-commit && echo 'Git hooks installed'"
   },
   "dependencies": {
+    "@fontsource/dm-sans": "^5.2.8",
     "@octokit/graphql": "^9.0.3",
     "@upstash/ratelimit": "^2.0.8",
     "@upstash/redis": "^1.36.3",
