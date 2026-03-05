@@ -8,10 +8,10 @@
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree/stargazers">
-    <img src="https://img.shields.io/github/stars/turkishdelightmu/pixel-tree?style=social&label=Stars" alt="Stars">
+    <img src="https://img.shields.io/github/stars/turkishdelightmu/pixel-tree?style=flat-square&label=Stars" alt="Stars">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree/network/members">
-    <img src="https://img.shields.io/github/forks/turkishdelightmu/pixel-tree?style=social&label=Forks" alt="Forks">
+    <img src="https://img.shields.io/github/forks/turkishdelightmu/pixel-tree?style=flat-square&label=Forks" alt="Forks">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree/issues">
     <img src="https://img.shields.io/github/issues/turkishdelightmu/pixel-tree?style=flat-square&label=Issues" alt="Issues">
@@ -20,7 +20,7 @@
     <img src="https://img.shields.io/github/sponsors/turkishdelightmu?style=flat-square&label=Sponsor" alt="Sponsor">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/turkishdelightmu/pixel-tree" alt="License">
+    <img src="https://img.shields.io/github/license/turkishdelightmu/pixel-tree?style=flat-square&label=License" alt="License">
   </a>
 </p>
 
