@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Test, typecheck & build
+    runs-on: ubuntu-latest
+
+    steps:
+      # ── Checkout ────────────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Node.js ─────────────────────────────────────────────────────
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # ── node-canvas native deps (libcairo, libpango, etc.) ──────────
+      - name: Install canvas system libraries
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y \
+            libcairo2-dev \
+            libpango1.0-dev \
+            libjpeg-dev \
+            libgif-dev \
+            librsvg2-dev
+
+      # ── npm install ─────────────────────────────────────────────────
+      - name: Install dependencies
+        run: npm ci
+
+      # ── Unit tests ──────────────────────────────────────────────────
+      - name: Run tests
+        run: npm test -- --ci --forceExit
+
+      # ── TypeScript ──────────────────────────────────────────────────
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+
+      # ── Next.js build ───────────────────────────────────────────────
+      - name: Build
+        run: npm run build
+        env:
+          # Provide placeholder secrets so the build doesn't crash at
+          # import-time.  Real values are only needed at runtime.
+          GITHUB_PAT: ${{ secrets.GITHUB_PAT }}
+          UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
+          UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
+          NEXT_PUBLIC_BASE_URL: https://pixel-tree.vercel.app

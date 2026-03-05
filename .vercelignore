@@ -1,0 +1,7 @@
+# Dev/test files — not needed in the Vercel deploy bundle
+scripts/
+lib/*.test.ts
+jest.config.ts
+tsconfig.tsbuildinfo
+action-template/
+*.log

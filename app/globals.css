@@ -1,0 +1,35 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* CRT scanline overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.07) 2px,
+    rgba(0, 0, 0, 0.07) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(124,92,255,0.3); }
+  50%       { box-shadow: 0 0 22px rgba(124,92,255,0.7); }
+}
+
+@layer utilities {
+  .font-pixel { font-family: var(--font-pixel), monospace; }
+  .font-vt    { font-family: var(--font-vt), monospace; }
+  .font-body  { font-family: var(--font-body), sans-serif; }
+  .canvas-pixel {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+  .animate-pulse-glow { animation: pulse-glow 2s infinite; }
+}
