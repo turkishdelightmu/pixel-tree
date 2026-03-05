@@ -306,7 +306,7 @@ export default function HomePage() {
         <ul className="flex gap-7 list-none m-0 p-0">
           <li><a href="#how-it-works" className="text-muted text-[13px] no-underline hover:text-text transition-colors">Docs</a></li>
           <li><a href="/api/tree?user=torvalds" className="text-muted text-[13px] no-underline hover:text-text transition-colors">API</a></li>
-          <li><a href="https://github.com" className="text-muted text-[13px] no-underline hover:text-text transition-colors" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+          <li><a href="https://github.com/turkishdelightmu/pixel-tree" className="text-muted text-[13px] no-underline hover:text-text transition-colors" target="_blank" rel="noopener noreferrer">GitHub</a></li>
         </ul>
       </nav>
 
@@ -315,12 +315,13 @@ export default function HomePage() {
         <div className="font-pixel text-[8px] text-accent2 border border-accent2 inline-block px-[14px] py-[6px] mb-6 tracking-[2px] animate-pulse-glow">
           ✦ README WIDGET ✦
         </div>
-        <h1 className="font-pixel leading-relaxed text-white mb-4"
-            style={{ fontSize: 'clamp(22px,3.6vw,38px)' }}>
+        <h1 className="font-pixel text-white mb-5 leading-[1.35]"
+            style={{ fontSize: 'clamp(30px,5.2vw,56px)' }}>
           YOUR COMMITS<br />
           <span className="text-accent">GROW A TREE</span>
         </h1>
-        <p className="text-[18px] text-muted max-w-[720px] mx-auto mb-9 leading-[1.65]">
+        <p className="text-muted max-w-[820px] mx-auto mb-9 leading-[1.6]"
+           style={{ fontSize: 'clamp(20px,2.3vw,28px)' }}>
           Drop your GitHub username and watch your contribution history bloom into a unique pixel art tree. Embed it in any README.
         </p>
       </section>
@@ -331,7 +332,7 @@ export default function HomePage() {
           <div className="flex border-2 border-border bg-panel transition-all duration-200
                           focus-within:border-accent
                           focus-within:[box-shadow:0_0_0_3px_rgba(0,255,157,0.1),0_0_30px_rgba(0,255,157,0.07)]">
-            <div className="flex items-center px-4 text-accent font-vt text-[22px] border-r-2 border-border bg-[rgba(0,255,157,0.03)]">
+            <div className="flex items-center px-4 text-accent font-vt text-[20px] border-r-2 border-border bg-[rgba(0,255,157,0.03)]">
               @
             </div>
             <input
@@ -340,7 +341,7 @@ export default function HomePage() {
               onChange={(e) => setInputValue(e.target.value)}
               placeholder="github-username"
               maxLength={39}
-              className="flex-1 bg-transparent border-none outline-none text-text font-vt text-[20px] px-4 py-[14px] tracking-[1px] placeholder:text-muted"
+              className="flex-1 bg-transparent border-none outline-none text-text font-vt text-[18px] px-4 py-[14px] tracking-[1px] placeholder:text-muted"
             />
             <button type="submit"
               className="bg-accent text-black border-none px-6 font-pixel text-[9px] cursor-pointer whitespace-nowrap hover:bg-[#00e88d] active:scale-[0.98] transition-all">
