@@ -194,6 +194,7 @@ git log --oneline --decorate -n 20
 - **Next.js**
 - **GitHub GraphQL API**
 - **Upstash Redis**
+- **Github Copilot**
 
 ## 📝 License
 
