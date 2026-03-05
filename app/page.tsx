@@ -279,7 +279,7 @@ export default function HomePage() {
     ? envBase.replace(/\/$/, '')
     : 'https://pixel-tree-jet.vercel.app';
   const snippetUser = activeUser || 'username';
-  const snippetText = `![GitHub Pixel Tree](${BASE}/api/tree?user=${snippetUser}&view=card&v=20260305)`;
+  const snippetText = `![GitHub Pixel Tree](${BASE}/api/tree?user=${snippetUser}&view=card&v=20260305c)`;
 
   function copySnippet() {
     navigator.clipboard.writeText(snippetText).then(() => {
