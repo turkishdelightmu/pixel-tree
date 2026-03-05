@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { fetchContributions, GitHubError } from '@/lib/github';
 import { getTier } from '@/lib/treeSelector';
 import { renderTree } from '@/lib/renderer';
+import { renderTreeCard } from '@/lib/cardRenderer';
 import { checkRateLimit, getCachedScore, setCachedScore } from '@/lib/rateLimiter';
 
 // Next.js App Router: no static caching — every request is dynamic
@@ -23,6 +24,8 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const { searchParams } = req.nextUrl;
   const user = searchParams.get('user')?.trim() ?? '';
   const wantsMeta = searchParams.get('meta') === '1' || searchParams.get('format') === 'json';
+  const view = searchParams.get('view') === 'card' ? 'card' : 'tree';
+  const cardSize = searchParams.get('size') === 'md' ? 'md' : 'sm';
 
   if (!user) {
     return errorPng('Missing required query parameter: user', 400);
@@ -93,7 +96,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   let png: Buffer;
   try {
-    png = await renderTree(tier);
+    png = view === 'card'
+      ? await renderTreeCard({ username: user, score, tier, size: cardSize })
+      : await renderTree(tier);
   } catch (err) {
     console.error('[api/tree] render error:', err);
     return errorPng('Failed to render tree', 500);

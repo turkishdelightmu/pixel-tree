@@ -279,7 +279,7 @@ export default function HomePage() {
     ? envBase.replace(/\/$/, '')
     : (typeof window !== 'undefined' ? window.location.origin : '');
   const snippetUser = activeUser || 'username';
-  const snippetText = `![Pixel Tree](${BASE}/api/tree?user=${snippetUser})`;
+  const snippetText = `![GitHub Pixel Tree](${BASE}/api/tree?user=${snippetUser}&view=card&size=sm)`;
 
   function copySnippet() {
     navigator.clipboard.writeText(snippetText).then(() => {
