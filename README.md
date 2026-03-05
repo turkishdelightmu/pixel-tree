@@ -42,15 +42,6 @@ _Watch how your contributions grow into a tree!_
   </a>
 </p>
 
-| Tier | Contributions | Tree Type    |
-| ---- | ------------- | ------------ |
-| 0    | 0–49          | Bare Tree    |
-| 1    | 50–199        | Sakura Tree  |
-| 2    | 200–499       | Willow Tree  |
-| 3    | 500–999       | Oak Tree     |
-| 4    | 1000–1999     | Redwood      |
-| 5    | 2000+         | Crystal Tree |
-
 ## 🚀 Quick Start
 
 ```bash
