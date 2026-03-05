@@ -119,7 +119,7 @@ function drawWrappedSansText(
 
   ctx.save();
   ctx.fillStyle = color;
-  ctx.font = `${fontSize}px "DM Sans", sans-serif`;
+  ctx.font = `${fontSize}px "DM Sans"`;
   ctx.textBaseline = 'top';
 
   const words = normalized.split(' ');
@@ -235,7 +235,7 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
     TREE_DESCRIPTIONS[tier],
     infoX,
     descY,
-    '#c8d8f0',
+    '#6a9fd8',
     descMaxWidth,
     isCompact ? 2 : 3,
     isCompact ? 12 : 16,
