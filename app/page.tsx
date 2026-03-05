@@ -411,6 +411,25 @@ export default function HomePage() {
 
       {/* DIVIDER */}
       <div style={DIVIDER_STYLE} />
+      <p id="how-it-works" className="font-pixel text-[10px] text-muted tracking-[3px] text-center mb-10">{'// HOW IT WORKS //'}</p>
+
+      {/* STEPS */}
+      <div className="grid grid-cols-3 gap-4 mb-[70px] max-[600px]:grid-cols-1">
+        {([
+          ['01', 'ENTER USERNAME',         'Type any public GitHub username. No login or auth required — we query the public API server-side.'],
+          ['02', 'WE FETCH YOUR COMMITS',  'Your past year of contributions is analyzed. The total determines your tree tier automatically.'],
+          ['03', 'EMBED IN README',         'Copy the markdown snippet and paste it in your GitHub profile README. The tree updates daily.'],
+        ] as const).map(([num, title, body]) => (
+          <div key={num} className="border-2 border-border bg-panel p-7 px-5">
+            <span className="font-pixel text-[26px] text-accent opacity-20 mb-3 block">{num}</span>
+            <h3 className="font-pixel text-[9px] mb-[10px] text-white leading-[1.6]">{title}</h3>
+            <p className="text-[13px] text-muted leading-[1.7]">{body}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* DIVIDER */}
+      <div style={DIVIDER_STYLE} />
       <p className="font-pixel text-[10px] text-muted tracking-[3px] text-center mb-10">{'// ALL TREE TIERS //'}</p>
 
       {/* TREE TIER GRID */}
@@ -435,25 +454,6 @@ export default function HomePage() {
               {RANGE_LABELS[i]} commits
             </div>
           </button>
-        ))}
-      </div>
-
-      {/* DIVIDER */}
-      <div style={DIVIDER_STYLE} />
-      <p id="how-it-works" className="font-pixel text-[10px] text-muted tracking-[3px] text-center mb-10">{'// HOW IT WORKS //'}</p>
-
-      {/* STEPS */}
-      <div className="grid grid-cols-3 gap-4 mb-[70px] max-[600px]:grid-cols-1">
-        {([
-          ['01', 'ENTER USERNAME',         'Type any public GitHub username. No login or auth required — we query the public API server-side.'],
-          ['02', 'WE FETCH YOUR COMMITS',  'Your past year of contributions is analyzed. The total determines your tree tier automatically.'],
-          ['03', 'EMBED IN README',         'Copy the markdown snippet and paste it in your GitHub profile README. The tree updates daily.'],
-        ] as const).map(([num, title, body]) => (
-          <div key={num} className="border-2 border-border bg-panel p-7 px-5">
-            <span className="font-pixel text-[26px] text-accent opacity-20 mb-3 block">{num}</span>
-            <h3 className="font-pixel text-[9px] mb-[10px] text-white leading-[1.6]">{title}</h3>
-            <p className="text-[13px] text-muted leading-[1.7]">{body}</p>
-          </div>
         ))}
       </div>
 
