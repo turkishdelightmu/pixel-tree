@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="[/assets/trees/background.png](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/background.png)" alt="main-image">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/background.png" alt="main-image">
   </a>
 </p>
 
@@ -37,7 +37,7 @@ _Watch how your contributions grow into a tree!_
 
 <p align="center">
   <a href="https://github.com/turkishdelightmu/pixel-tree">
-    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/tree-tier.png" alt="tree-tier">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/tree-tiers.png" alt="tree-tier">
   </a>
 </p>
 
