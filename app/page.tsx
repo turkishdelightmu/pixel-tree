@@ -274,7 +274,10 @@ export default function HomePage() {
     }
   }
 
-  const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? '';
+  const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim() ?? '';
+  const BASE = (envBase && !envBase.includes('localhost') && !envBase.includes('127.0.0.1'))
+    ? envBase.replace(/\/$/, '')
+    : (typeof window !== 'undefined' ? window.location.origin : '');
   const snippetUser = activeUser || 'username';
   const snippetText = `![Pixel Tree](${BASE}/api/tree?user=${snippetUser})`;
 
