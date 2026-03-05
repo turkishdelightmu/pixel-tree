@@ -30,7 +30,7 @@ Pixel Tree fetches your last year of GitHub activity and visualizes it as a st
 
 ## 🎬 Demo / GIF Preview
 
-![Pixel Tree Demo](https://user-images.githubusercontent.com/<your_gif_here>.gif)  
+![Pixel Tree Demo](https://github.com/turkishdelightmu/pixel-tree/blob/main/demo.gif)  
 _Watch how your contributions grow into a tree!_
 
 ## 🌳 Tier Breakdown
