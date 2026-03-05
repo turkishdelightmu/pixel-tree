@@ -36,19 +36,21 @@ let dmSansRegistered = false;
 function ensureDmSansFontRegistered(): void {
   if (dmSansRegistered) return;
 
-  const dmSansWoffPath = path.join(
+  const dmSansTtfPath = path.join(
     process.cwd(),
-    'node_modules',
-    '@fontsource',
-    'dm-sans',
-    'files',
-    'dm-sans-latin-400-normal.woff',
+    'app',
+    'fonts',
+    'DMSans-Regular.ttf',
   );
 
-  if (!existsSync(dmSansWoffPath)) return;
+  if (!existsSync(dmSansTtfPath)) return;
 
   try {
-    registerFont(dmSansWoffPath, { family: 'DM Sans' });
+    registerFont(dmSansTtfPath, {
+      family: 'DM Sans',
+      weight: 'normal',
+      style: 'normal',
+    });
     dmSansRegistered = true;
   } catch {
     // Keep rendering even if font registration fails in a constrained runtime.
