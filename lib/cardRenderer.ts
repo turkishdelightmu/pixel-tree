@@ -13,6 +13,14 @@ interface CardRenderOptions {
 
 const TREE_NAMES = ['BARE TREE', 'SAKURA TREE', 'WILLOW TREE', 'OAK TREE', 'REDWOOD', 'CRYSTAL TREE'] as const;
 const TREE_COLORS = ['#aac4d8', '#ff9ec7', '#7dd9a8', '#d4a017', '#ff6030', '#c060ff'] as const;
+const TREE_DESCRIPTIONS = [
+  'Inactive or brand new account. Waiting for the first commit of spring.',
+  'A casual contributor. Blossoms with pink petals carried by the wind.',
+  'A regular developer. Consistent growth with calm, steady momentum.',
+  'A strong productive developer. Dense canopy and deep roots.',
+  'A towering presence in the community. Prolific and unstoppable.',
+  'A monument to dedication. Elite consistency at massive scale.',
+] as const;
 
 const SIZE_PRESETS: Record<CardSize, { width: number; height: number; treeScale: number }> = {
   // README-optimized compact card.
@@ -60,6 +68,8 @@ const GLYPHS: Record<string, string[]> = {
   '8': ['01110', '10001', '10001', '01110', '10001', '10001', '01110'],
   '9': ['01110', '10001', '10001', '01111', '00001', '00001', '01110'],
   '@': ['01110', '10001', '10111', '10101', '10111', '10000', '01111'],
+  "'": ['00100', '00100', '00100', '00000', '00000', '00000', '00000'],
+  ':': ['00000', '01100', '01100', '00000', '01100', '01100', '00000'],
   '/': ['00001', '00010', '00010', '00100', '01000', '01000', '10000'],
   '-': ['00000', '00000', '00000', '11111', '00000', '00000', '00000'],
   ',': ['00000', '00000', '00000', '00000', '00110', '00100', '01000'],
@@ -90,6 +100,54 @@ function drawPixelText(
       }
     }
     cx += 5 * scale + letterGap;
+  }
+}
+
+function normalizePixelText(input: string): string {
+  return input
+    .replace(/[\u2013\u2014]/g, '-')
+    .replace(/[^a-zA-Z0-9@/\-.,:'\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function measurePixelTextWidth(text: string, scale = 2, letterGap = 1): number {
+  if (!text.length) return 0;
+  return text.length * (5 * scale + letterGap) - letterGap;
+}
+
+function drawWrappedPixelText(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  color: string,
+  maxWidth: number,
+  maxLines: number,
+  scale = 1,
+  letterGap = 1,
+): void {
+  const normalized = normalizePixelText(text).toUpperCase();
+  if (!normalized) return;
+
+  const words = normalized.split(' ');
+  const lines: string[] = [];
+  let current = '';
+
+  for (const word of words) {
+    const candidate = current ? `${current} ${word}` : word;
+    if (measurePixelTextWidth(candidate, scale, letterGap) <= maxWidth) {
+      current = candidate;
+    } else {
+      if (current) lines.push(current);
+      current = word;
+      if (lines.length >= maxLines) break;
+    }
+  }
+  if (current && lines.length < maxLines) lines.push(current);
+
+  for (let i = 0; i < Math.min(lines.length, maxLines); i += 1) {
+    drawPixelText(ctx, lines[i], x, y + i * (8 * scale), color, scale, letterGap);
   }
 }
 
@@ -171,6 +229,21 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
     drawPixelText(ctx, stat.label, x + 6, statTop + 6, '#6a9fd8', 1, 1);
     drawPixelText(ctx, stat.value, x + 6, statTop + (isCompact ? 22 : 26), '#00ff9d', isCompact ? 1 : 2, 1);
   });
+
+  // Compact card gets 2 lines; medium gets 3 lines.
+  const descY = statTop + statH + (isCompact ? 8 : 10);
+  const descMaxWidth = preset.width - infoX - rightPadding;
+  drawWrappedPixelText(
+    ctx,
+    TREE_DESCRIPTIONS[tier],
+    infoX,
+    descY,
+    '#6a9fd8',
+    descMaxWidth,
+    isCompact ? 2 : 3,
+    1,
+    1,
+  );
 
   // Footer signature for readability in README
   drawPixelText(ctx, 'GITHUB PIXEL TREE', infoX, preset.height - (isCompact ? 14 : 22), '#4a6080', 1, 1);
