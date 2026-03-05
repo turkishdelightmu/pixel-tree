@@ -100,7 +100,7 @@ https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu
 ### Embed Tree Card in GitHub README
 
 ```markdown
-![GitHub Pixel Tree Card](https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card)
+![GitHub Pixel Tree Card](https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&v=20260305)
 ```
 
 ## 💖 Contributing
