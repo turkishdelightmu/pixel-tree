@@ -18,7 +18,7 @@
     <img src="https://img.shields.io/github/sponsors/turkishdelightmu?style=flat-square&label=Sponsor" alt="Sponsor">
   </a>
   <a href="https://github.com/turkishdelightmu/pixel-tree/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/turkishdelightmu/pixel-tree?style=flat-square" alt="License">
+    <img src="https://img.shields.io/github/license/turkishdelightmu/pixel-tree" alt="License">
   </a>
 </p>
 
