@@ -55,4 +55,4 @@ jobs:
           GH_PAT: ${{ secrets.GH_PAT }}
           UPSTASH_REDIS_REST_URL: ${{ secrets.UPSTASH_REDIS_REST_URL }}
           UPSTASH_REDIS_REST_TOKEN: ${{ secrets.UPSTASH_REDIS_REST_TOKEN }}
-          NEXT_PUBLIC_BASE_URL: https://pixel-tree.vercel.app
+          NEXT_PUBLIC_BASE_URL: https://pixel-tree-jet.vercel.app

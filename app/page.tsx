@@ -277,7 +277,7 @@ export default function HomePage() {
   const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim() ?? '';
   const BASE = (envBase && !envBase.includes('localhost') && !envBase.includes('127.0.0.1'))
     ? envBase.replace(/\/$/, '')
-    : (typeof window !== 'undefined' ? window.location.origin : '');
+    : 'https://pixel-tree-jet.vercel.app';
   const snippetUser = activeUser || 'username';
   const snippetText = `![GitHub Pixel Tree](${BASE}/api/tree?user=${snippetUser}&view=card)`;
 
