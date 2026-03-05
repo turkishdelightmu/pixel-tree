@@ -42,6 +42,29 @@ _Watch how your contributions grow into a tree!_
   </a>
 </p>
 
+## 🌳 Tree Types
+
+<p align="left">
+  <a href="https://github.com/turkishdelightmu/pixel-tree">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/bare.png" alt="bare-tree" width="700">
+  </a>
+   <a href="https://github.com/turkishdelightmu/pixel-tree">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/sakura.png" alt="sakura-tree" width="700">
+  </a>
+   <a href="https://github.com/turkishdelightmu/pixel-tree">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/willow.png" alt="willow-tree" width="700">
+  </a>
+  <a href="https://github.com/turkishdelightmu/pixel-tree">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/oak.png" alt="oak-tree" width="700">
+  </a>
+  <a href="https://github.com/turkishdelightmu/pixel-tree">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/redwood.png" alt="redwood-tree" width="700">
+  </a>
+  <a href="https://github.com/turkishdelightmu/pixel-tree">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/crystal.png" alt="crystal-tree" width="700">
+  </a>
+</p>
+
 ## 🚀 Quick Start
 
 ```bash
