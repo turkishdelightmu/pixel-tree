@@ -79,7 +79,7 @@ This project includes Jest tests (see `jest.config.ts`). Run them with:
 npm test
 ```
 
-## ⚙️ TIER_BOUNDARIES Explained
+## ⚙️ TIER_BOUNDARIES 
 
 `TIER_BOUNDARIES` is a comma-separated list of 6 contribution thresholds used to map a score to tree tiers.
 
