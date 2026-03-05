@@ -217,6 +217,7 @@ export default function HomePage() {
   const [inputValue, setInputValue] = useState('');
   const [activeUser, setActiveUser]  = useState('');
   const [activeTier, setActiveTier]  = useState(3);
+  const [activeScore, setActiveScore] = useState<number | null>(null);
   const [copied, setCopied]          = useState(false);
   const [imgStatus, setImgStatus]    = useState<'idle'|'loading'|'loaded'|'error'>('idle');
 
@@ -246,12 +247,31 @@ export default function HomePage() {
     TREES[activeTier].draw(ctx);
   }, [activeTier, activeUser]);
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     const u = inputValue.trim();
     if (!u || !USERNAME_RE.test(u)) return;
+
+    setActiveScore(null);
     setImgStatus('loading');
-    setActiveUser(u);
+    try {
+      const res = await fetch(`/api/tree?user=${encodeURIComponent(u)}&meta=1`, { cache: 'no-store' });
+      if (!res.ok) {
+        setActiveUser(u);
+        setImgStatus('error');
+        return;
+      }
+
+      const data = (await res.json()) as { score?: number; tier?: number };
+      if (typeof data.score === 'number') setActiveScore(data.score);
+      if (typeof data.tier === 'number' && data.tier >= 0 && data.tier <= 5) {
+        setActiveTier(data.tier);
+      }
+      setActiveUser(u);
+    } catch {
+      setActiveUser(u);
+      setImgStatus('error');
+    }
   }
 
   const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? '';
@@ -363,7 +383,11 @@ export default function HomePage() {
           <h2 className="font-pixel text-[14px] mb-3" style={{ color: t.color }}>{t.name}</h2>
           <p className="text-muted text-[14px] leading-[1.7] mb-5">{t.desc}</p>
           <div className="flex gap-5 mb-[22px] flex-wrap">
-            {([['COMMITS/YEAR', activeUser ? '...' : t.commits], ['TIER', t.tier], ['TREE TYPE', t.type]] as const).map(([label, value]) => (
+            {([
+              ['COMMITS/YEAR', activeScore !== null ? activeScore.toLocaleString() : activeUser ? '...' : t.commits],
+              ['TIER', t.tier],
+              ['TREE TYPE', t.type],
+            ] as const).map(([label, value]) => (
               <div key={label} className="bg-black/30 border border-border px-4 py-[10px]">
                 <div className="font-pixel text-[7px] text-muted mb-[6px]">{label}</div>
                 <div className="font-vt text-[26px] text-accent">{value}</div>

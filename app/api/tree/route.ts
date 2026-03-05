@@ -9,6 +9,7 @@ export const dynamic = 'force-dynamic';
 
 // Username validation — same regex as lib/github.ts
 const USERNAME_RE = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/;
+const TREE_NAMES = ['BARE TREE', 'SAKURA TREE', 'WILLOW TREE', 'OAK TREE', 'REDWOOD', 'CRYSTAL TREE'] as const;
 
 function errorPng(message: string, status: number): NextResponse {
   return new NextResponse(message, {
@@ -21,6 +22,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   // ── 1. Parse & validate username ──────────────────────────────────
   const { searchParams } = req.nextUrl;
   const user = searchParams.get('user')?.trim() ?? '';
+  const wantsMeta = searchParams.get('meta') === '1' || searchParams.get('format') === 'json';
 
   if (!user) {
     return errorPng('Missing required query parameter: user', 400);
@@ -69,6 +71,25 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   // ── 4. Map score → tier → PNG ─────────────────────────────────────
   const tier = getTier(score);
+
+  if (wantsMeta) {
+    return NextResponse.json(
+      {
+        user,
+        score,
+        tier,
+        treeName: TREE_NAMES[tier],
+      },
+      {
+        status: 200,
+        headers: {
+          'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
+          'X-RateLimit-Remaining': String(remaining),
+          'X-RateLimit-Reset': String(reset),
+        },
+      },
+    );
+  }
 
   let png: Buffer;
   try {
