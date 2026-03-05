@@ -35,6 +35,13 @@ _Watch how your contributions grow into a tree!_
 
 ## 🌳 Tier Breakdown
 
+
+<p align="center">
+  <a href="https://github.com/turkishdelightmu/pixel-tree">
+    <img src="https://github.com/turkishdelightmu/pixel-tree/blob/main/tree-tiers.png" alt="tree-tier">
+  </a>
+</p>
+
 | Tier | Contributions | Tree Type    |
 | ---- | ------------- | ------------ |
 | 0    | 0–49          | Bare Tree    |
