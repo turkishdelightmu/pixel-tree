@@ -460,7 +460,7 @@ export default function HomePage() {
       {/* FOOTER */}
       <footer className="border-t border-border py-6 flex items-center justify-between text-[12px] text-muted">
         <span className="font-pixel text-[8px] text-accent">GITHUB PIXEL TREE</span>
-        <span>turkishdelightmu</span>
+        <span>© 2026 turkishdelightmu</span>
       </footer>
 
     </div>
