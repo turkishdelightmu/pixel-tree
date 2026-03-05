@@ -144,7 +144,8 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
 
   // Stats blocks
   const statTop = 86;
-  const statW = size === 'sm' ? 128 : 146;
+  const availableStatsWidth = preset.width - infoX - 16;
+  const statW = Math.floor((availableStatsWidth - 2 * 12) / 3);
   const statH = 58;
   const statGap = 12;
 

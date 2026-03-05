@@ -25,7 +25,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const user = searchParams.get('user')?.trim() ?? '';
   const wantsMeta = searchParams.get('meta') === '1' || searchParams.get('format') === 'json';
   const view = searchParams.get('view') === 'card' ? 'card' : 'tree';
-  const cardSize = searchParams.get('size') === 'md' ? 'md' : 'sm';
+  const cardSize = searchParams.get('size') === 'sm' ? 'sm' : 'md';
 
   if (!user) {
     return errorPng('Missing required query parameter: user', 400);

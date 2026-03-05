@@ -279,7 +279,7 @@ export default function HomePage() {
     ? envBase.replace(/\/$/, '')
     : (typeof window !== 'undefined' ? window.location.origin : '');
   const snippetUser = activeUser || 'username';
-  const snippetText = `![GitHub Pixel Tree](${BASE}/api/tree?user=${snippetUser}&view=card&size=sm)`;
+  const snippetText = `![GitHub Pixel Tree](${BASE}/api/tree?user=${snippetUser}&view=card)`;
 
   function copySnippet() {
     navigator.clipboard.writeText(snippetText).then(() => {
@@ -304,7 +304,7 @@ export default function HomePage() {
             <rect x="2" y="4" width="4" height="1" fill="#00ff9d" />
             <rect x="3" y="5" width="2" height="3" fill="#7a4820" />
           </svg>
-          PIXEL TREE
+          GITHUB PIXEL TREE
         </div>
         <ul className="flex gap-7 list-none m-0 p-0">
           <li><a href="#how-it-works" className="text-muted text-[13px] no-underline hover:text-text transition-colors">Docs</a></li>
