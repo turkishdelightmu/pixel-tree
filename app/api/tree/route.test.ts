@@ -23,12 +23,18 @@ jest.mock('@/lib/cardRenderer', () => ({
 
 jest.mock('@/lib/rateLimiter', () => ({
   checkRateLimit: jest.fn(),
+}))
+
+jest.mock('@/lib/scoreCache', () => ({
   getCachedScore: jest.fn(),
   setCachedScore: jest.fn(),
 }))
 
 const mockedRateLimiter = jest.requireMock('@/lib/rateLimiter') as {
   checkRateLimit: jest.Mock
+}
+
+const mockedScoreCache = jest.requireMock('@/lib/scoreCache') as {
   getCachedScore: jest.Mock
   setCachedScore: jest.Mock
 }
@@ -42,7 +48,7 @@ describe('GET /api/tree', () => {
       reset: Date.now() + 60_000,
       reason: 'ok',
     })
-    mockedRateLimiter.getCachedScore.mockResolvedValue(0)
+    mockedScoreCache.getCachedScore.mockResolvedValue(0)
   })
 
   test('rejects usernames longer than 39 characters', async () => {
@@ -99,5 +105,28 @@ describe('GET /api/tree', () => {
 
     expect(response.status).toBe(400)
     expect(await response.text()).toContain('Invalid preview tier')
+  })
+
+  test('returns 400 for non-numeric preview tiers', async () => {
+    const { GET } = await import('./route')
+    const request = new NextRequest('http://localhost:3000/api/tree?previewTier=abc')
+
+    const response = await GET(request)
+
+    expect(response.status).toBe(400)
+    expect(await response.text()).toContain('Invalid preview tier')
+  })
+
+  test('uses last x-forwarded-for address for rate limiting fallback', async () => {
+    const { GET } = await import('./route')
+    const request = new NextRequest('http://localhost:3000/api/tree?user=octocat', {
+      headers: {
+        'x-forwarded-for': '1.2.3.4, 9.9.9.9',
+      },
+    })
+
+    await GET(request)
+
+    expect(mockedRateLimiter.checkRateLimit).toHaveBeenCalledWith('9.9.9.9')
   })
 })

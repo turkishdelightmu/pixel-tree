@@ -3,7 +3,8 @@ import { fetchContributions, GitHubError } from '@/lib/github';
 import { getTier } from '@/lib/treeSelector';
 import { renderTree } from '@/lib/renderer';
 import { renderTreeCard } from '@/lib/cardRenderer';
-import { checkRateLimit, getCachedScore, setCachedScore } from '@/lib/rateLimiter';
+import { checkRateLimit } from '@/lib/rateLimiter';
+import { getCachedScore, setCachedScore } from '@/lib/scoreCache';
 import { validateUsername } from '@/lib/githubUsername';
 import { isValidTreeTier, buildTreeLayers } from '@/lib/trees';
 import { TREE_METADATA } from '@/lib/treeMetadata';
@@ -52,22 +53,17 @@ function parseResponseFormat(searchParams: URLSearchParams): ResponseFormat | nu
   return null;
 }
 
-function parsePreviewTier(searchParams: URLSearchParams): number | null {
-  const rawPreviewTier = searchParams.get('previewTier');
-  if (rawPreviewTier === null) {
-    return null;
-  }
-  if (!/^\d+$/.test(rawPreviewTier)) {
-    return Number.NaN;
-  }
-
-  return Number.parseInt(rawPreviewTier, 10);
-}
-
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // ── 1. Parse & validate username ──────────────────────────────────
   const { searchParams } = req.nextUrl;
-  const previewTier = parsePreviewTier(searchParams);
+  const rawPreviewTier = searchParams.get('previewTier');
+  let previewTier: number | null = null;
+  if (rawPreviewTier !== null) {
+    if (!/^\d+$/.test(rawPreviewTier)) {
+      return errorPng('Invalid preview tier', 400);
+    }
+    previewTier = Number.parseInt(rawPreviewTier, 10);
+  }
   const user = searchParams.get('user')?.trim() ?? '';
   const responseFormat = parseResponseFormat(searchParams);
   const view = searchParams.get('view') === 'card' ? 'card' : 'tree';
@@ -146,10 +142,9 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   // ── 2. Rate limit by IP ───────────────────────────────────────────
-  const ip =
-    req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ??
-    req.headers.get('x-real-ip') ??
-    '127.0.0.1';
+  const forwardedFor = req.headers.get('x-forwarded-for');
+  const forwardedIp = forwardedFor?.split(',').pop()?.trim();
+  const ip = req.ip ?? forwardedIp ?? req.headers.get('x-real-ip') ?? '127.0.0.1';
 
   const { success: allowed, remaining, reset, reason } = await checkRateLimit(ip);
   if (reason === 'unavailable') {

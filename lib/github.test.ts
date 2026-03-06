@@ -52,7 +52,7 @@ describe('fetchContributions', () => {
   beforeEach(() => {
     jest.resetModules()
     jest.clearAllMocks()
-    process.env.GH_PAT = 'token'
+    process.env.GH_PAT = 'test-token-format'
   })
 
   test('passes an abort signal to the GitHub request', async () => {
@@ -84,7 +84,7 @@ describe('fetchContributions', () => {
     )
   })
 
-  test('reuses the configured GraphQL client across requests', async () => {
+  test('creates a configured GraphQL client per request', async () => {
     const graphqlRequest = jest.fn().mockResolvedValue({
       user: {
         contributionsCollection: {
@@ -103,7 +103,34 @@ describe('fetchContributions', () => {
     await fetchContributions('octocat')
     await fetchContributions('defunkt')
 
-    expect(graphqlDefaultsMock).toHaveBeenCalledTimes(1)
+    expect(graphqlDefaultsMock).toHaveBeenCalledTimes(2)
     expect(graphqlRequest).toHaveBeenCalledTimes(2)
+  })
+
+  test('warns when GH_PAT format looks unusual', async () => {
+    const graphqlRequest = jest.fn().mockResolvedValue({
+      user: {
+        contributionsCollection: {
+          totalCommitContributions: 1,
+          totalPullRequestContributions: 0,
+          totalIssueContributions: 0,
+          totalRepositoryContributions: 0,
+        },
+      },
+      rateLimit: { remaining: 4999, resetAt: new Date().toISOString() },
+    })
+    const graphqlDefaultsMock = getGraphqlDefaultsMock()
+    graphqlDefaultsMock.mockReturnValue(graphqlRequest)
+    process.env.GH_PAT = 'not-a-standard-token'
+
+    const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {})
+    const { fetchContributions } = await import('./github')
+
+    await fetchContributions('octocat')
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      '[github] GH_PAT format looks unusual. Verify token type and scopes.',
+    )
+    warnSpy.mockRestore()
   })
 })

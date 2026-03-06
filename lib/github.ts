@@ -4,6 +4,7 @@ const GITHUB_API_TIMEOUT_MS = 5000
 
 // GitHub username regex per their documented constraints
 const USERNAME_REGEX = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/
+const GITHUB_PAT_FORMAT_REGEX = /^(ghp_|gho_|ghu_|ghs_|ghr_|github_pat_)[A-Za-z0-9_]{10,}$|^[a-f0-9]{40}$/
 
 // Structured error for API route to map to HTTP status codes
 export class GitHubError extends Error {
@@ -29,17 +30,6 @@ interface ContributionsResponse {
     remaining: number
     resetAt: string
   }
-}
-
-// Holds the rate limit remaining from the last GitHub API call
-let _rateLimitRemaining = 5000
-
-/**
- * Returns the X-RateLimit-Remaining value from the most recent GitHub API call.
- * Defaults to 5000 before any call has been made.
- */
-export function getRateLimitRemaining(): number {
-  return _rateLimitRemaining
 }
 
 export function isAbortLikeError(err: unknown): boolean {
@@ -88,20 +78,6 @@ const CONTRIBUTIONS_QUERY = `
   }
 `
 
-let cachedGraphqlClient: ReturnType<typeof graphql.defaults> | null = null
-
-function getGraphqlClient(token: string): ReturnType<typeof graphql.defaults> {
-  if (cachedGraphqlClient) {
-    return cachedGraphqlClient
-  }
-
-  cachedGraphqlClient = graphql.defaults({
-    headers: { authorization: `token ${token}` },
-  })
-
-  return cachedGraphqlClient
-}
-
 /**
  * Fetches the total GitHub contribution score for a user over the past 365 days.
  * Score = totalCommitContributions + totalPullRequestContributions
@@ -122,11 +98,17 @@ export async function fetchContributions(username: string): Promise<number> {
     throw new GitHubError(500, 'GitHub PAT not configured')
   }
 
+  if (!GITHUB_PAT_FORMAT_REGEX.test(token)) {
+    console.warn('[github] GH_PAT format looks unusual. Verify token type and scopes.')
+  }
+
   const to = new Date()
   const from = new Date(to)
   from.setFullYear(from.getFullYear() - 1)
 
-  const graphqlWithAuth = getGraphqlClient(token)
+  const graphqlWithAuth = graphql.defaults({
+    headers: { authorization: `token ${token}` },
+  })
   const controller = new AbortController()
   const timeoutId = setTimeout(() => controller.abort(), GITHUB_API_TIMEOUT_MS)
 
@@ -143,9 +125,8 @@ export async function fetchContributions(username: string): Promise<number> {
       },
     )
 
-    // Update stored rate limit
     if (data.rateLimit?.remaining !== undefined) {
-      _rateLimitRemaining = data.rateLimit.remaining
+      console.info('[github] GitHub API rate limit remaining:', data.rateLimit.remaining)
     }
 
     if (!data.user) {
