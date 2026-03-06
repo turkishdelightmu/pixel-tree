@@ -185,15 +185,15 @@ Valid preview tiers are `0` through `5`.
 
 This roadmap is based on planned PDR future updates.
 
-| Version | Feature        | Description                                                                          |
-| ------- | -------------- | ------------------------------------------------------------------------------------ |
-| ✅ v1.1 | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal     |
-| ✅ v1.2 | Theme System   | Light / dark background themes via `?theme=` param — auto-switches in GitHub READMEs |
-| v1.3    | Custom Tiers   | User-configurable tier thresholds via query params                                   |
-| v2.0    | Streak Mode    | Tree health also factors in current streak (days in a row with commits)              |
-| v2.1    | Language Trees | Tree species based on most-used programming language                                 |
-| v2.2    | Seasonal Mode  | Tree automatically changes season based on current month                             |
-| v2.3    | OG Image API   | Social preview card with the tree for sharing on Twitter/LinkedIn                    |
+| Version | Feature        | Description                                                                           |
+| ------- | -------------- | ------------------------------------------------------------------------------------- |
+| ✅ v1.1 | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal etc. |
+| ✅ v1.2 | Theme System   | Light / dark background themes via `?theme=` param — auto-switches in GitHub READMEs  |
+| v1.3    | Custom Tiers   | User-configurable tier thresholds via query params                                    |
+| v2.0    | Streak Mode    | Tree health also factors in current streak (days in a row with commits)               |
+| v2.1    | Language Trees | Tree species based on most-used programming language                                  |
+| v2.2    | Seasonal Mode  | Tree automatically changes season based on current month                              |
+| v2.3    | OG Image API   | Social preview card with the tree for sharing on Twitter/LinkedIn                     |
 
 ## 🧭 Issues & Contributor Entry Points
 
