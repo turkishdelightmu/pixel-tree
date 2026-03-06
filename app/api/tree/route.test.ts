@@ -48,7 +48,7 @@ describe('GET /api/tree', () => {
       reset: Date.now() + 60_000,
       reason: 'ok',
     })
-    mockedScoreCache.getCachedScore.mockResolvedValue(0)
+    mockedScoreCache.getCachedScore.mockResolvedValue(null)
   })
 
   test('rejects usernames longer than 39 characters', async () => {
@@ -94,6 +94,18 @@ describe('GET /api/tree', () => {
 
     expect(response.status).toBe(200)
     expect(response.headers.get('Content-Type')).toBe('image/png')
+    expect(mockedRateLimiter.checkRateLimit).not.toHaveBeenCalled()
+  })
+
+  test('skips rate limiting when score cache has a value', async () => {
+    mockedScoreCache.getCachedScore.mockResolvedValueOnce(42)
+
+    const { GET } = await import('./route')
+    const request = new NextRequest('http://localhost:3000/api/tree?user=octocat')
+
+    const response = await GET(request)
+
+    expect(response.status).toBe(200)
     expect(mockedRateLimiter.checkRateLimit).not.toHaveBeenCalled()
   })
 

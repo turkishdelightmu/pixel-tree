@@ -141,41 +141,45 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     return errorPng(usernameValidationError, 400);
   }
 
-  // ── 2. Rate limit by IP ───────────────────────────────────────────
-  const forwardedFor = req.headers.get('x-forwarded-for');
-  const forwardedIp = forwardedFor?.split(',').pop()?.trim();
-  const ip = req.ip ?? forwardedIp ?? req.headers.get('x-real-ip') ?? '127.0.0.1';
-
-  const { success: allowed, remaining, reset, reason } = await checkRateLimit(ip);
-  if (reason === 'unavailable') {
-    return new NextResponse('Rate limiting service unavailable. Try again shortly.', {
-      status: 503,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Retry-After': '60',
-      },
-    });
-  }
-
-  if (!allowed) {
-    return new NextResponse('Rate limit exceeded. Try again in a minute.', {
-      status: 429,
-      headers: {
-        'Content-Type': 'text/plain; charset=utf-8',
-        'Retry-After': String(Math.max(0, Math.ceil((reset - Date.now()) / 1000))),
-        'X-RateLimit-Remaining': '0',
-        'X-RateLimit-Reset': String(reset),
-      },
-    });
-  }
-
-  // ── 3. Fetch contribution score (cache-first) ─────────────────────
+  // ── 2. Fetch contribution score (cache-first) ─────────────────────
   let score: number;
-
+  let remaining: number | null = null;
+  let reset: number | null = null;
   const cached = await getCachedScore(user);
   if (cached !== null) {
     score = cached;
   } else {
+    // Rate limiting protects GitHub API usage. Cached users skip this check.
+    const forwardedFor = req.headers.get('x-forwarded-for');
+    const forwardedIp = forwardedFor?.split(',').pop()?.trim();
+    const ip = req.ip ?? forwardedIp ?? req.headers.get('x-real-ip') ?? '127.0.0.1';
+    const { success: allowed, remaining: rlRemaining, reset: rlReset, reason } = await checkRateLimit(ip);
+
+    if (reason === 'unavailable') {
+      return new NextResponse('Rate limiting service unavailable. Try again shortly.', {
+        status: 503,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Retry-After': '60',
+        },
+      });
+    }
+
+    if (!allowed) {
+      return new NextResponse('Rate limit exceeded. Try again in a minute.', {
+        status: 429,
+        headers: {
+          'Content-Type': 'text/plain; charset=utf-8',
+          'Retry-After': String(Math.max(0, Math.ceil((rlReset - Date.now()) / 1000))),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': String(rlReset),
+        },
+      });
+    }
+
+    remaining = rlRemaining;
+    reset = rlReset;
+
     try {
       score = await fetchContributions(user);
       await setCachedScore(user, score);
@@ -197,6 +201,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   }
 
   if (responseFormat === 'json') {
+    const jsonHeaders: Record<string, string> = {
+      'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
+    };
+    if (remaining !== null && reset !== null) {
+      jsonHeaders['X-RateLimit-Remaining'] = String(remaining);
+      jsonHeaders['X-RateLimit-Reset'] = String(reset);
+    }
+
     return NextResponse.json(
       {
         user,
@@ -206,11 +218,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       },
       {
         status: 200,
-        headers: {
-          'Cache-Control': 'public, max-age=300, stale-while-revalidate=3600',
-          'X-RateLimit-Remaining': String(remaining),
-          'X-RateLimit-Reset': String(reset),
-        },
+        headers: jsonHeaders,
       },
     );
   }
@@ -252,10 +260,14 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
       'Content-Type': 'image/png',
       'Content-Length': String(png.length),
       'Cache-Control': imageCacheControl,
-      'X-RateLimit-Remaining': String(remaining),
-      'X-RateLimit-Reset': String(reset),
       // Tell GitHub (and anyone embedding) this is an image, never sniff
       'X-Content-Type-Options': 'nosniff',
+      ...(remaining !== null && reset !== null
+        ? {
+            'X-RateLimit-Remaining': String(remaining),
+            'X-RateLimit-Reset': String(reset),
+          }
+        : {}),
     },
   });
 }
