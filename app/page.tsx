@@ -52,7 +52,6 @@ export default function HomePage() {
     try {
       const res = await fetch(`/api/tree?user=${encodeURIComponent(u)}&format=json`, { cache: 'no-store' });
       if (!res.ok) {
-        setActiveUser(u);
         setImgStatus('error');
         return;
       }
@@ -64,7 +63,6 @@ export default function HomePage() {
       }
       setActiveUser(u);
     } catch {
-      setActiveUser(u);
       setImgStatus('error');
     }
   }
@@ -81,8 +79,15 @@ export default function HomePage() {
     `  <img alt="GitHub Pixel Tree" src="${lightCardUrl}" />`,
     `</picture>`,
   ].join('\n');
+  const canCopySnippet = Boolean(activeUser);
 
   function copySnippet() {
+    if (!canCopySnippet) {
+      setCopyStatus('error');
+      setTimeout(() => setCopyStatus('idle'), 2000);
+      return;
+    }
+
     navigator.clipboard.writeText(snippetText).then(() => {
       setCopyStatus('copied');
       setTimeout(() => setCopyStatus('idle'), 2000);
@@ -219,9 +224,10 @@ export default function HomePage() {
           <div className="bg-panel border border-border p-3 px-4 font-vt text-[15px] text-muted flex items-center justify-between gap-3 overflow-hidden dark:bg-[#050a14] dark:text-[#6a9fd8]">
             <span className="truncate">{snippetText}</span>
             <button onClick={copySnippet}
-              className="shrink-0 border-none px-[14px] py-[6px] font-pixel text-[7px] cursor-pointer whitespace-nowrap transition-all"
+              disabled={!canCopySnippet}
+              className="shrink-0 border-none px-[14px] py-[6px] font-pixel text-[7px] whitespace-nowrap transition-all disabled:cursor-not-allowed disabled:opacity-60"
               style={{ background: copyStatus === 'copied' ? '#00ff9d' : copyStatus === 'error' ? '#ff6060' : '#7c5cff', color: copyStatus === 'copied' ? '#000' : '#fff' }}>
-              {copyStatus === 'copied' ? 'COPIED!' : copyStatus === 'error' ? 'FAILED' : 'COPY'}
+              {copyStatus === 'copied' ? 'COPIED!' : copyStatus === 'error' ? 'FAILED' : canCopySnippet ? 'COPY' : 'SET USER'}
             </button>
           </div>
         </div>
