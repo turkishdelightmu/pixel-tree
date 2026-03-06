@@ -3,6 +3,8 @@ import path from 'node:path';
 import { createCanvas, registerFont } from 'canvas';
 import type { CanvasRenderingContext2D } from 'canvas';
 import { drawTree } from './trees';
+import { encodeCanvasToPng } from './pngEncoder';
+import { TREE_METADATA } from './treeMetadata';
 
 type CardSize = 'sm' | 'md';
 
@@ -13,17 +15,6 @@ interface CardRenderOptions {
   size?: CardSize;
 }
 
-const TREE_NAMES = ['BARE TREE', 'SAKURA TREE', 'WILLOW TREE', 'OAK TREE', 'REDWOOD', 'CRYSTAL TREE'] as const;
-const TREE_COLORS = ['#aac4d8', '#ff9ec7', '#7dd9a8', '#d4a017', '#ff6030', '#c060ff'] as const;
-const TREE_DESCRIPTIONS = [
-  'Inactive or brand new account. Waiting for the first commit of spring.',
-  'A casual contributor. Blossoms with pink petals carried by the wind.',
-  'A regular developer. Consistent growth with calm, steady momentum.',
-  'A strong productive developer. Dense canopy and deep roots.',
-  'A towering presence in the community. Prolific and unstoppable.',
-  'A monument to dedication. Elite consistency at massive scale.',
-] as const;
-
 const SIZE_PRESETS: Record<CardSize, { width: number; height: number; treeScale: number }> = {
   // README-optimized compact card.
   sm: { width: 420, height: 152, treeScale: 1 },
@@ -33,9 +24,7 @@ const SIZE_PRESETS: Record<CardSize, { width: number; height: number; treeScale:
 
 let dmSansRegistered = false;
 
-function ensureDmSansFontRegistered(): boolean {
-  if (dmSansRegistered) return true;
-
+function tryRegisterDmSansFont(): boolean {
   const dmSansTtfPath = path.join(
     process.cwd(),
     'app',
@@ -51,13 +40,17 @@ function ensureDmSansFontRegistered(): boolean {
       weight: 'normal',
       style: 'normal',
     });
-    dmSansRegistered = true;
+    return true;
   } catch {
     // Keep rendering even if font registration fails in a constrained runtime.
     return false;
   }
+}
 
-  return true;
+dmSansRegistered = tryRegisterDmSansFont();
+
+export function hasDmSansFontRegistered(): boolean {
+  return dmSansRegistered;
 }
 
 // 5x7 pixel font so README card text is deterministic on any server runtime.
@@ -108,6 +101,32 @@ const GLYPHS: Record<string, string[]> = {
   ' ': ['00000', '00000', '00000', '00000', '00000', '00000', '00000'],
 };
 
+type GlyphPixelOffset = readonly [x: number, y: number];
+
+function compileGlyphPixels(glyphs: Record<string, string[]>): Record<string, readonly GlyphPixelOffset[]> {
+  return Object.fromEntries(
+    Object.entries(glyphs).map(([glyph, rows]) => {
+      const pixels: GlyphPixelOffset[] = [];
+
+      rows.forEach((row, y) => {
+        for (let x = 0; x < row.length; x += 1) {
+          if (row[x] === '1') {
+            pixels.push([x, y]);
+          }
+        }
+      });
+
+      return [glyph, pixels] as const;
+    }),
+  );
+}
+
+const GLYPH_PIXELS = compileGlyphPixels(GLYPHS);
+
+export function getGlyphPixels(char: string): readonly GlyphPixelOffset[] {
+  return GLYPH_PIXELS[char.toUpperCase()] ?? GLYPH_PIXELS[' '];
+}
+
 function drawPixelText(
   ctx: CanvasRenderingContext2D,
   text: string,
@@ -122,14 +141,10 @@ function drawPixelText(
 
   let cx = x;
   for (const ch of up) {
-    const glyph = GLYPHS[ch] ?? GLYPHS[' '];
-    for (let row = 0; row < glyph.length; row += 1) {
-      for (let col = 0; col < glyph[row].length; col += 1) {
-        if (glyph[row][col] === '1') {
-          ctx.fillRect(cx + col * scale, y + row * scale, scale, scale);
-        }
-      }
+    for (const [pixelX, pixelY] of getGlyphPixels(ch)) {
+      ctx.fillRect(cx + pixelX * scale, y + pixelY * scale, scale, scale);
     }
+
     cx += 5 * scale + letterGap;
   }
 }
@@ -182,8 +197,6 @@ function drawWrappedSansText(
 }
 
 export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer> {
-  ensureDmSansFontRegistered();
-
   const size = options.size ?? 'sm';
   const preset = SIZE_PRESETS[size];
   const tier = Math.max(0, Math.min(5, options.tier));
@@ -231,9 +244,10 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
 
   // Text area
   const infoX = treeFrameX + treeFrameW + (isCompact ? 10 : 16);
-  const titleColor = TREE_COLORS[tier];
+  const treeMeta = TREE_METADATA[tier];
+  const titleColor = treeMeta.color;
 
-  drawPixelText(ctx, TREE_NAMES[tier], infoX, isCompact ? 16 : 26, titleColor, isCompact ? 1 : 2, isCompact ? 1 : 2);
+  drawPixelText(ctx, treeMeta.name, infoX, isCompact ? 16 : 26, titleColor, isCompact ? 1 : 2, isCompact ? 1 : 2);
   drawPixelText(ctx, `@${options.username}`, infoX, isCompact ? 30 : 54, '#6a9fd8', isCompact ? 1 : 2, 1);
 
   // Stats blocks
@@ -247,7 +261,7 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   const stats: Array<{ label: string; value: string }> = [
     { label: 'COMMITS/YEAR', value: options.score.toLocaleString() },
     { label: 'TIER', value: `${tier + 1} / 6` },
-    { label: 'TYPE', value: TREE_NAMES[tier].replace(' TREE', '') },
+    { label: 'TYPE', value: treeMeta.type },
   ];
 
   stats.forEach((stat, index) => {
@@ -267,7 +281,7 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   const descMaxWidth = preset.width - infoX - rightPadding;
   drawWrappedSansText(
     ctx,
-    TREE_DESCRIPTIONS[tier],
+    treeMeta.cardDescription,
     infoX,
     descY,
     '#6a9fd8',
@@ -280,5 +294,5 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   // Footer signature for readability in README
   drawPixelText(ctx, 'GITHUB PIXEL TREE', infoX, preset.height - (isCompact ? 14 : 22), '#4a6080', 1, 1);
 
-  return canvas.toBuffer('image/png');
+  return encodeCanvasToPng(canvas);
 }

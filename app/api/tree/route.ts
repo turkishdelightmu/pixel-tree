@@ -4,13 +4,14 @@ import { getTier } from '@/lib/treeSelector';
 import { renderTree } from '@/lib/renderer';
 import { renderTreeCard } from '@/lib/cardRenderer';
 import { checkRateLimit, getCachedScore, setCachedScore } from '@/lib/rateLimiter';
+import { validateUsername } from '@/lib/githubUsername';
+import { isValidTreeTier } from '@/lib/trees';
+import { TREE_METADATA } from '@/lib/treeMetadata';
 
 // Next.js App Router: no static caching — every request is dynamic
 export const dynamic = 'force-dynamic';
 
-// Username validation — same regex as lib/github.ts
-const USERNAME_RE = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/;
-const TREE_NAMES = ['BARE TREE', 'SAKURA TREE', 'WILLOW TREE', 'OAK TREE', 'REDWOOD', 'CRYSTAL TREE'] as const;
+type ResponseFormat = 'png' | 'json';
 
 function errorPng(message: string, status: number): NextResponse {
   return new NextResponse(message, {
@@ -19,19 +20,88 @@ function errorPng(message: string, status: number): NextResponse {
   });
 }
 
+function parseResponseFormat(searchParams: URLSearchParams): ResponseFormat | null {
+  if (searchParams.get('meta') === '1') {
+    return 'json';
+  }
+
+  const format = searchParams.get('format');
+  if (!format || format === 'png') {
+    return 'png';
+  }
+  if (format === 'json') {
+    return 'json';
+  }
+
+  return null;
+}
+
+function parsePreviewTier(searchParams: URLSearchParams): number | null {
+  const rawPreviewTier = searchParams.get('previewTier');
+  if (rawPreviewTier === null) {
+    return null;
+  }
+  if (!/^\d+$/.test(rawPreviewTier)) {
+    return Number.NaN;
+  }
+
+  return Number.parseInt(rawPreviewTier, 10);
+}
+
 export async function GET(req: NextRequest): Promise<NextResponse> {
   // ── 1. Parse & validate username ──────────────────────────────────
   const { searchParams } = req.nextUrl;
+  const previewTier = parsePreviewTier(searchParams);
   const user = searchParams.get('user')?.trim() ?? '';
-  const wantsMeta = searchParams.get('meta') === '1' || searchParams.get('format') === 'json';
+  const responseFormat = parseResponseFormat(searchParams);
   const view = searchParams.get('view') === 'card' ? 'card' : 'tree';
   const cardSize = searchParams.get('size') === 'md' ? 'md' : 'sm';
 
-  if (!user) {
-    return errorPng('Missing required query parameter: user', 400);
+  if (!responseFormat) {
+    return errorPng('Unsupported format. Use png or json.', 400);
   }
-  if (!USERNAME_RE.test(user)) {
-    return errorPng(`Invalid GitHub username: "${user}"`, 400);
+
+  if (previewTier !== null) {
+    if (!isValidTreeTier(previewTier)) {
+      return errorPng('Invalid preview tier', 400);
+    }
+
+    if (responseFormat === 'json') {
+      return NextResponse.json({
+        preview: true,
+        tier: previewTier,
+        treeName: TREE_METADATA[previewTier].name,
+      });
+    }
+
+    try {
+      const previewPng = view === 'card'
+        ? await renderTreeCard({
+            username: 'preview',
+            score: TREE_METADATA[previewTier].previewCommitsValue,
+            tier: previewTier,
+            size: cardSize,
+          })
+        : await renderTree(previewTier);
+
+      return new NextResponse(new Uint8Array(previewPng), {
+        status: 200,
+        headers: {
+          'Content-Type': 'image/png',
+          'Content-Length': String(previewPng.length),
+          'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+          'X-Content-Type-Options': 'nosniff',
+        },
+      });
+    } catch (err) {
+      console.error('[api/tree] preview render error:', err);
+      return errorPng('Failed to render preview tree', 500);
+    }
+  }
+
+  const usernameValidationError = validateUsername(user);
+  if (usernameValidationError) {
+    return errorPng(usernameValidationError, 400);
   }
 
   // ── 2. Rate limit by IP ───────────────────────────────────────────
@@ -40,7 +110,17 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
     req.headers.get('x-real-ip') ??
     '127.0.0.1';
 
-  const { success: allowed, remaining, reset } = await checkRateLimit(ip);
+  const { success: allowed, remaining, reset, reason } = await checkRateLimit(ip);
+  if (reason === 'unavailable') {
+    return new NextResponse('Rate limiting service unavailable. Try again shortly.', {
+      status: 503,
+      headers: {
+        'Content-Type': 'text/plain; charset=utf-8',
+        'Retry-After': '60',
+      },
+    });
+  }
+
   if (!allowed) {
     return new NextResponse('Rate limit exceeded. Try again in a minute.', {
       status: 429,
@@ -75,13 +155,18 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   // ── 4. Map score → tier → PNG ─────────────────────────────────────
   const tier = getTier(score);
 
-  if (wantsMeta) {
+  if (!isValidTreeTier(tier) || tier >= TREE_METADATA.length) {
+    console.error('[api/tree] invalid tier computed:', { score, tier, user });
+    return errorPng('Failed to determine tree tier', 500);
+  }
+
+  if (responseFormat === 'json') {
     return NextResponse.json(
       {
         user,
         score,
         tier,
-        treeName: TREE_NAMES[tier],
+        treeName: TREE_METADATA[tier].name,
       },
       {
         status: 200,

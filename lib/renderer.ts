@@ -1,11 +1,16 @@
 import { createCanvas } from 'canvas';
-import { drawTree } from './trees/index';
+import { drawTree, isValidTreeTier, MAX_TREE_TIER } from './trees/index';
+import { encodeCanvasToPng } from './pngEncoder';
 
 const BASE_W = 64;
 const BASE_H = 80;
 const BG_COLOR = '#0a0e1a';
 
 export async function renderTree(tier: number, scale = 4): Promise<Buffer> {
+  if (!isValidTreeTier(tier)) {
+    throw new Error(`Invalid tree tier ${tier}. Expected an integer between 0 and ${MAX_TREE_TIER}.`);
+  }
+
   const w = BASE_W * scale;
   const h = BASE_H * scale;
   const canvas = createCanvas(w, h);
@@ -21,5 +26,5 @@ export async function renderTree(tier: number, scale = 4): Promise<Buffer> {
   drawTree(ctx, tier);
   ctx.restore();
 
-  return canvas.toBuffer('image/png');
+  return encodeCanvasToPng(canvas);
 }

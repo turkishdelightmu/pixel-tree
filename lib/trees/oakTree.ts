@@ -1,15 +1,5 @@
 import type { CanvasRenderingContext2D } from 'canvas';
-
-function px(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
-  if (!color || color === 'T') return;
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, 1, 1);
-}
-
-function r(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string) {
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, w, h);
-}
+import { px, r } from './helpers';
 
 export function drawOakTree(ctx: CanvasRenderingContext2D): void {
   const Tk = '#3a1e08', Tkm = '#4e2c10', Tkl = '#6a3e1c', Tkh = '#8a5a30';

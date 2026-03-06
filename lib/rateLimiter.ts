@@ -36,11 +36,12 @@ export interface RateLimitResult {
   success: boolean
   remaining: number
   reset: number // unix timestamp ms of window reset
+  reason: 'ok' | 'rate_limited' | 'unavailable'
 }
 
 /**
  * Checks the per-IP rate limit (10 req/min, sliding window).
- * Fails open if Redis is unavailable — logs a warning and allows the request.
+ * Fails closed if Redis is unavailable so rate limiting cannot be bypassed.
  */
 export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
   try {
@@ -49,11 +50,16 @@ export async function checkRateLimit(ip: string): Promise<RateLimitResult> {
       success: result.success,
       remaining: result.remaining,
       reset: result.reset,
+      reason: result.success ? 'ok' : 'rate_limited',
     }
   } catch (err) {
-    // Fail open: if Upstash is down, don't block legitimate traffic
-    console.warn('[rateLimiter] Redis unavailable — failing open:', err)
-    return { success: true, remaining: 9, reset: Date.now() + 60_000 }
+    console.error('[rateLimiter] Redis unavailable — failing closed:', err)
+    return {
+      success: false,
+      remaining: 0,
+      reset: Date.now() + 60_000,
+      reason: 'unavailable',
+    }
   }
 }
 
