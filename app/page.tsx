@@ -117,7 +117,7 @@ export default function HomePage() {
         <h1 className="font-pixel text-text mb-5 leading-[1.4] dark:text-white"
             style={{ fontSize: 'clamp(24px,4.2vw,44px)' }}>
           YOUR ACTIVITY<br />
-          <span className="text-accent">GROW A TREE</span>
+          <span className="text-accent">GROWS A TREE</span>
         </h1>
           <p className="text-muted max-w-[680px] mx-auto mb-9 leading-[1.7]"
             style={{ fontSize: 'clamp(14px,1.25vw,18px)' }}>
