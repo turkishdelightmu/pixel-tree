@@ -17,8 +17,17 @@ const treeDrawers: DrawFn[] = [
   drawCrystalTree, // tier 5 — 2000+
 ];
 
+export const MAX_TREE_TIER = treeDrawers.length - 1;
+
+export function isValidTreeTier(tier: number): boolean {
+  return Number.isInteger(tier) && tier >= 0 && tier <= MAX_TREE_TIER;
+}
+
 export function drawTree(ctx: CanvasRenderingContext2D, tier: number): void {
+  if (!isValidTreeTier(tier)) {
+    throw new Error(`Invalid tree tier ${tier}. Expected an integer between 0 and ${MAX_TREE_TIER}.`);
+  }
+
   const draw = treeDrawers[tier];
-  if (!draw) throw new Error(`No tree drawer for tier ${tier}`);
   draw(ctx);
 }
