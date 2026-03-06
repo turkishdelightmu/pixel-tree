@@ -26,7 +26,7 @@
   </a>
 </p>
 
-Turn your **GitHub contributions** into a **pixel-art tree** 🌳 — with both standalone tree images and profile-friendly cards!
+Turn your **GitHub activity** into a **pixel-art tree** 🌳 — with both standalone tree images and profile-friendly cards!
 
 Pixel Tree fetches your last year of GitHub activity and visualizes it as a stylized pixel tree. Whether you’re casually contributing or coding, there’s a tree waiting for you.
 
