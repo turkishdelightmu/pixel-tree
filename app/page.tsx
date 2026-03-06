@@ -24,13 +24,20 @@ export default function HomePage() {
   const [baseUrl, setBaseUrl] = useState('https://pixel-tree-jet.vercel.app');
 
   useEffect(() => {
+    const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim() ?? '';
+    const envBaseIsPublic = envBase && !envBase.includes('localhost') && !envBase.includes('127.0.0.1');
+
     if (typeof window !== 'undefined' && window.location.origin) {
-      setBaseUrl(window.location.origin);
-      return;
+      const origin = window.location.origin;
+      const isLocalOrigin = origin.includes('localhost') || origin.includes('127.0.0.1');
+
+      if (!isLocalOrigin) {
+        setBaseUrl(origin);
+        return;
+      }
     }
 
-    const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim() ?? '';
-    if (envBase && !envBase.includes('localhost') && !envBase.includes('127.0.0.1')) {
+    if (envBaseIsPublic) {
       setBaseUrl(envBase.replace(/\/$/, ''));
     }
   }, []);
@@ -64,8 +71,9 @@ export default function HomePage() {
 
   const snippetUser = activeUser || 'username';
   const snippetVersion = '20260306-theme-ui-v2';
-  const darkCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark&v=${snippetVersion}`;
-  const lightCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light&v=${snippetVersion}`;
+  // GitHub README rendering is more reliable with PNG than external SVG.
+  const darkCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=png&theme=dark&v=${snippetVersion}`;
+  const lightCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=png&theme=light&v=${snippetVersion}`;
   const snippetText = [
     `<picture>`,
     `  <source media="(prefers-color-scheme: dark)" srcset="${darkCardUrl}" />`,
