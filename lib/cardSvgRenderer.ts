@@ -164,7 +164,7 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
   const { styleBlock, groupsBlock } = serializeTreeFragment(layers, TREE_SCALE, 4);
 
   const stats = [
-    { label: 'COMMITS/YEAR', value: options.score.toLocaleString() },
+    { label: 'ACTIVITY/YEAR', value: options.score.toLocaleString() },
     { label: 'TIER',         value: `${tier + 1} / 6` },
     { label: 'TYPE',         value: meta.type },
   ];

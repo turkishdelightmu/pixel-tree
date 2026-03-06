@@ -259,7 +259,7 @@ export async function renderTreeCard(options: CardRenderOptions): Promise<Buffer
   const statH = isCompact ? 44 : 58;
 
   const stats: Array<{ label: string; value: string }> = [
-    { label: 'COMMITS/YEAR', value: options.score.toLocaleString() },
+    { label: 'ACTIVITY/YEAR', value: options.score.toLocaleString() },
     { label: 'TIER', value: `${tier + 1} / 6` },
     { label: 'TYPE', value: treeMeta.type },
   ];

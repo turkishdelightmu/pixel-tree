@@ -98,7 +98,7 @@ describe('renderTreeCardSVG', () => {
     expect(svg).toContain('animation:pixel-fall');
   });
 
-  test('contains stat labels COMMITS/YEAR, TIER, TYPE', () => {
+  test('contains stat labels ACTIVITY/YEAR, TIER, TYPE', () => {
     const svg = renderTreeCardSVG(defaults);
     expect(svg).toContain('<rect x="116" y="52" width="91" height="44"');
     expect(svg).toContain('<rect x="215" y="52" width="91" height="44"');

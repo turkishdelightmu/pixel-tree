@@ -62,7 +62,7 @@ export default function HomePage() {
   }
 
   const snippetUser = activeUser || 'username';
-  const snippetVersion = '20260306-theme-v2';
+  const snippetVersion = '20260306-activity-year-v1';
   const darkCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark&v=${snippetVersion}`;
   const lightCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light&v=${snippetVersion}`;
   const snippetText = [
@@ -197,7 +197,7 @@ export default function HomePage() {
           <p className="text-muted text-[14px] leading-[1.7] mb-5">{t.pageDescription}</p>
           <div className="flex gap-5 mb-[22px] flex-wrap">
             {([
-              ['COMMITS/YEAR', activeScore !== null ? activeScore.toLocaleString() : activeUser ? '...' : t.previewCommitsLabel],
+              ['ACTIVITY/YEAR', activeScore !== null ? activeScore.toLocaleString() : activeUser ? '...' : t.previewCommitsLabel],
               ['TIER', t.tierLabel],
               ['TREE TYPE', t.type],
             ] as const).map(([label, value]) => (
