@@ -38,6 +38,16 @@ describe('renderTreeCardSVG', () => {
     expect(svg).toContain('@keyframes pixel-fall');
   });
 
+  test('animation keyframes use animScale=4 distances (not invisible 1px)', () => {
+    // sway at animScale=4 should be ±4px, not ±1px
+    const svg = renderTreeCardSVG({ username: 'u', score: 300, tier: 2 }); // willow → sway
+    expect(svg).toContain('translateX(-4px)');
+    expect(svg).toContain('translateX(4px)');
+    // fall at animScale=4 should reach 64px (4*16), not 16px (1*16)
+    const svgFall = renderTreeCardSVG({ username: 'u', score: 10, tier: 0 }); // bare → fall
+    expect(svgFall).toContain('translateY(64px)');
+  });
+
   test('embeds tree inside a translate transform at correct position', () => {
     const svg = renderTreeCardSVG(defaults);
     expect(svg).toContain('translate(26,36)');

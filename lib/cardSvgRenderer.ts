@@ -112,8 +112,9 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
   const meta = TREE_METADATA[tier];
   const layers = buildTreeLayers(tier);
 
-  // Animated tree inner content (style block + layer <g> groups at scale=1)
-  const { styleBlock, groupsBlock } = serializeTreeFragment(layers, TREE_SCALE);
+  // Animated tree inner content: pixels at scale=1, but animation distances use
+  // animScale=4 so that sway/fall/drift motions are clearly visible (not 1px).
+  const { styleBlock, groupsBlock } = serializeTreeFragment(layers, TREE_SCALE, 4);
 
   const stats = [
     { label: 'COMMITS/YEAR', value: String(options.score) },

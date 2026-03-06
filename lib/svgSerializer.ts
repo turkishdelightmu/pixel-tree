@@ -44,22 +44,26 @@ function shapeToRect(shape: TreeShape, s: number): string {
 }
 
 // Shared inner builder — returns the <style> block and array of <g> strings.
+// pixelScale: one grid unit → N screen pixels (used for rect positions & sizes).
+// animScale:  controls @keyframes translation distances — defaults to pixelScale.
+//             Set independently so a small-scale embed can still have visible motion.
 function buildLayerContent(
   layers: readonly TreeLayer[],
-  scale: number,
+  pixelScale: number,
+  animScale = pixelScale,
 ): { styleBlock: string; groups: string[] } {
   const usedTypes = new Set<AnimationType>();
   for (const layer of layers) {
     if (layer.animation) usedTypes.add(layer.animation.type);
   }
 
-  const kf = buildKeyframes(scale);
+  const kf = buildKeyframes(animScale);
   const styleLines: string[] = [];
   Array.from(usedTypes).forEach((type) => styleLines.push(kf[type]));
 
   const groups: string[] = [];
   for (const layer of layers) {
-    const rects = layer.shapes.map((s) => shapeToRect(s, scale)).join('');
+    const rects = layer.shapes.map((s) => shapeToRect(s, pixelScale)).join('');
 
     let extra = '';
     if (layer.animation) {
@@ -90,7 +94,7 @@ export function serializeTreeToSVG(
 ): string {
   const w = 64 * scale;
   const h = 80 * scale;
-  const { styleBlock, groups } = buildLayerContent(layers, scale);
+  const { styleBlock, groups } = buildLayerContent(layers, scale, scale);
 
   return [
     `<?xml version="1.0" encoding="UTF-8"?>`,
@@ -109,7 +113,8 @@ export function serializeTreeToSVG(
 export function serializeTreeFragment(
   layers: readonly TreeLayer[],
   scale = DEFAULT_SCALE,
+  animScale = scale,
 ): { styleBlock: string; groupsBlock: string } {
-  const { styleBlock, groups } = buildLayerContent(layers, scale);
+  const { styleBlock, groups } = buildLayerContent(layers, scale, animScale);
   return { styleBlock, groupsBlock: groups.join('\n') };
 }
