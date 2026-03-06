@@ -4,10 +4,11 @@ import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { validateUsername } from '@/lib/githubUsername';
 import { MAX_TREE_TIER, TREE_METADATA } from '@/lib/treeMetadata';
+import ThemeToggle from './components/ThemeToggle';
 
 const DIVIDER_STYLE: React.CSSProperties = {
   height: '2px',
-  background: 'repeating-linear-gradient(90deg,#00ff9d 0,#00ff9d 8px,transparent 8px,transparent 16px)',
+  background: 'repeating-linear-gradient(90deg,var(--color-accent) 0,var(--color-accent) 8px,transparent 8px,transparent 16px)',
   margin: '48px 0',
   opacity: 0.15,
 };
@@ -91,12 +92,12 @@ export default function HomePage() {
       {/* NAV */}
       <nav className="flex items-center justify-between py-5 border-b border-border">
         <div className="font-pixel text-[13px] text-accent flex items-center gap-3"
-             style={{ textShadow: '0 0 20px rgba(0,255,157,0.5)' }}>
+             style={{ textShadow: '0 0 20px rgba(var(--color-accent),0.3)' }}>
           <svg width="28" height="28" viewBox="0 0 8 8" style={{ imageRendering: 'pixelated' }} aria-hidden="true">
-            <rect x="3" y="0" width="2" height="1" fill="#00ff9d" />
-            <rect x="2" y="1" width="4" height="1" fill="#00ff9d" />
-            <rect x="1" y="2" width="6" height="2" fill="#00cc7a" />
-            <rect x="2" y="4" width="4" height="1" fill="#00ff9d" />
+            <rect x="3" y="0" width="2" height="1" fill="var(--color-accent)" />
+            <rect x="2" y="1" width="4" height="1" fill="var(--color-accent)" />
+            <rect x="1" y="2" width="6" height="2" fill="var(--color-accent)" />
+            <rect x="2" y="4" width="4" height="1" fill="var(--color-accent)" />
             <rect x="3" y="5" width="2" height="3" fill="#7a4820" />
           </svg>
           GITHUB PIXEL TREE
@@ -113,7 +114,7 @@ export default function HomePage() {
         <div className="font-pixel text-[8px] text-accent2 border border-accent2 inline-block px-[14px] py-[6px] mb-6 tracking-[2px] animate-pulse-glow">
           ✦ README WIDGET ✦
         </div>
-        <h1 className="font-pixel text-white mb-5 leading-[1.4]"
+        <h1 className="font-pixel text-text mb-5 leading-[1.4] dark:text-white"
             style={{ fontSize: 'clamp(24px,4.2vw,44px)' }}>
           YOUR COMMITS<br />
           <span className="text-accent">GROW A TREE</span>
@@ -142,7 +143,7 @@ export default function HomePage() {
               className="flex-1 bg-transparent border-none outline-none text-text font-vt text-[18px] px-4 py-[14px] tracking-[1px] placeholder:text-muted"
             />
             <button type="submit"
-              className="bg-accent text-black border-none px-6 font-pixel text-[9px] cursor-pointer whitespace-nowrap hover:bg-[#00e88d] active:scale-[0.98] transition-all">
+              className="bg-accent text-black border-none px-6 font-pixel text-[9px] cursor-pointer whitespace-nowrap hover:bg-accent-hover active:scale-[0.98] transition-all">
               GROW ▶
             </button>
           </div>
@@ -151,10 +152,10 @@ export default function HomePage() {
 
       {/* PREVIEW PANEL */}
       <div className="bg-panel border-2 border-border p-9 mb-[60px] flex gap-11 items-center flex-wrap">
-        <div className="relative shrink-0 w-[120px] h-[150px] flex items-center justify-center bg-black/40 border-2 border-border">
+        <div className="relative shrink-0 w-[120px] h-[150px] flex items-center justify-center bg-text/5 dark:bg-black/40 border-2 border-border">
           {activeUser && imgStatus === 'loaded' && (
-            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 font-pixel text-[6px] px-[6px] py-[3px] bg-black/80 tracking-[1px]"
-              style={{ color: '#00ff9d', border: '1px solid #00ff9d44' }}>
+            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 font-pixel text-[6px] px-[6px] py-[3px] dark:bg-black/80 bg-panel/90 tracking-[1px]"
+              style={{ color: 'var(--color-accent)', border: '1px solid color-mix(in srgb, var(--color-accent) 27%, transparent)' }}>
               ANIMATED
             </span>
           )}
@@ -201,13 +202,13 @@ export default function HomePage() {
               ['TIER', t.tierLabel],
               ['TREE TYPE', t.type],
             ] as const).map(([label, value]) => (
-              <div key={label} className="bg-black/30 border border-border px-4 py-[10px]">
+              <div key={label} className="bg-text/5 dark:bg-black/30 border border-border px-4 py-[10px]">
                 <div className="font-pixel text-[7px] text-muted mb-[6px]">{label}</div>
                 <div className="font-vt text-[26px] text-accent">{value}</div>
               </div>
             ))}
           </div>
-          <div className="bg-[#050a14] border border-border p-3 px-4 font-vt text-[15px] text-[#6a9fd8] flex items-center justify-between gap-3 overflow-hidden">
+          <div className="bg-panel border border-border p-3 px-4 font-vt text-[15px] text-muted flex items-center justify-between gap-3 overflow-hidden dark:bg-[#050a14] dark:text-[#6a9fd8]">
             <span className="truncate">{snippetText}</span>
             <button onClick={copySnippet}
               className="shrink-0 border-none px-[14px] py-[6px] font-pixel text-[7px] cursor-pointer whitespace-nowrap transition-all"
@@ -231,7 +232,7 @@ export default function HomePage() {
         ] as const).map(([num, title, body]) => (
           <div key={num} className="border-2 border-border bg-panel p-7 px-5">
             <span className="font-pixel text-[26px] text-accent opacity-20 mb-3 block">{num}</span>
-            <h3 className="font-pixel text-[9px] mb-[10px] text-white leading-[1.6]">{title}</h3>
+            <h3 className="font-pixel text-[9px] mb-[10px] text-text dark:text-white leading-[1.6]">{title}</h3>
             <p className="text-[13px] text-muted leading-[1.7]">{body}</p>
           </div>
         ))}
@@ -278,6 +279,7 @@ export default function HomePage() {
         <span>© 2026 turkishdelightmu</span>
       </footer>
 
+      <ThemeToggle />
     </div>
   );
 }

@@ -5,16 +5,18 @@ const config: Config = {
     './app/**/*.{ts,tsx}',
     './lib/**/*.{ts,tsx}',
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
-        bg:      '#0a0e1a',
-        panel:   '#0f1628',
-        border:  '#1e2d50',
-        accent:  '#00ff9d',
-        accent2: '#7c5cff',
-        text:    '#c8d8f0',
-        muted:   '#4a6080',
+        bg:           'var(--color-bg)',
+        panel:        'var(--color-panel)',
+        border:       'var(--color-border)',
+        accent:       'var(--color-accent)',
+        'accent-hover': 'var(--color-accent-hover)',
+        accent2:      'var(--color-accent2)',
+        text:         'var(--color-text)',
+        muted:        'var(--color-muted)',
       },
       fontFamily: {
         pixel: ['"Press Start 2P"', 'monospace'],

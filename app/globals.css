@@ -2,6 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── Light theme (default / day) ───────────────────────────────────────── */
+:root {
+  --color-bg:           #f0f4ff;
+  --color-panel:        #e2e8f7;
+  --color-border:       #b8c8e8;
+  --color-accent:       #059669;
+  --color-accent-hover: #047857;
+  --color-accent2:      #5b4fcf;
+  --color-text:         #1a2340;
+  --color-muted:        #6b7fa3;
+}
+
+/* ── Dark theme (night) ────────────────────────────────────────────────── */
+.dark {
+  --color-bg:           #0a0e1a;
+  --color-panel:        #0f1628;
+  --color-border:       #1e2d50;
+  --color-accent:       #00ff9d;
+  --color-accent-hover: #00e88d;
+  --color-accent2:      #7c5cff;
+  --color-text:         #c8d8f0;
+  --color-muted:        #4a6080;
+}
+
 /* CRT scanline overlay */
 body::before {
   content: '';

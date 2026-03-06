@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Press_Start_2P, VT323, DM_Sans } from 'next/font/google';
+import ThemeProvider from './components/ThemeProvider';
 import './globals.css';
 
 const pressStart2P = Press_Start_2P({
@@ -37,9 +38,11 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${pressStart2P.variable} ${vt323.variable} ${dmSans.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${pressStart2P.variable} ${vt323.variable} ${dmSans.variable}`}>
       <body className="bg-bg text-text font-body antialiased">
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );
