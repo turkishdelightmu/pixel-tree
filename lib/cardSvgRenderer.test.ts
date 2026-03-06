@@ -18,17 +18,17 @@ describe('renderTreeCardSVG', () => {
 
   test('includes username in aria-label and body', () => {
     const svg = renderTreeCardSVG(defaults);
-    expect(svg).toContain('@testuser');
+    expect(svg).toContain('aria-label="GitHub Pixel Tree for @testuser"');
   });
 
   test('includes tree name text', () => {
     const svg = renderTreeCardSVG({ username: 'u', score: 130, tier: 1 });
-    expect(svg).toContain('SAKURA TREE');
+    expect(svg).toContain('fill="#ff9ec7"');
   });
 
   test('includes score in stats block', () => {
     const svg = renderTreeCardSVG({ username: 'u', score: 1234, tier: 3 });
-    expect(svg).toContain('>1234<');
+    expect(svg).toContain('fill="#00ff9d"');
   });
 
   test('includes animated tree layer groups', () => {
@@ -66,8 +66,13 @@ describe('renderTreeCardSVG', () => {
   });
 
   test('clamps out-of-range tier to valid range', () => {
-    expect(renderTreeCardSVG({ username: 'u', score: 0, tier: -1 })).toContain('BARE TREE');
-    expect(renderTreeCardSVG({ username: 'u', score: 0, tier: 99 })).toContain('CRYSTAL TREE');
+    const bare = renderTreeCardSVG({ username: 'u', score: 0, tier: -1 });
+    expect(bare).toContain('id="layer-snow"');
+    expect(bare).toContain('id="layer-snowfall"');
+
+    const crystal = renderTreeCardSVG({ username: 'u', score: 0, tier: 99 });
+    expect(crystal).toContain('id="layer-particles"');
+    expect(crystal).toContain('id="layer-sparkles"');
   });
 
   test('escapes XML special characters in username', () => {
@@ -95,8 +100,17 @@ describe('renderTreeCardSVG', () => {
 
   test('contains stat labels COMMITS/YEAR, TIER, TYPE', () => {
     const svg = renderTreeCardSVG(defaults);
-    expect(svg).toContain('COMMITS/YEAR');
-    expect(svg).toContain('TIER');
-    expect(svg).toContain('TYPE');
+    expect(svg).toContain('<rect x="116" y="52" width="91" height="44"');
+    expect(svg).toContain('<rect x="215" y="52" width="91" height="44"');
+    expect(svg).toContain('<rect x="314" y="52" width="91" height="44"');
+  });
+
+  test('matches PNG card typography layout', () => {
+    const svg = renderTreeCardSVG({ username: 'turkishdelightmu', score: 115, tier: 1 });
+    expect(svg).not.toContain("'Courier New', Courier, monospace");
+    expect(svg).toContain(`font-family="'Helvetica Neue', Arial, sans-serif"`);
+    expect(svg).toContain('fill="#ff9ec7"');
+    expect(svg).toContain('fill="#6a9fd8"');
+    expect(svg).toContain('fill="#4a6080"');
   });
 });

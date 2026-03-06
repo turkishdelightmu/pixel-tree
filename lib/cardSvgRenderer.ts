@@ -1,3 +1,4 @@
+import { getGlyphPixels } from './cardRenderer';
 import { serializeTreeFragment } from './svgSerializer';
 import { buildTreeLayers } from './trees';
 import { TREE_METADATA } from './treeMetadata';
@@ -36,7 +37,6 @@ const STAT_GAP = 8;
 const STAT_H = 44;
 const STAT_W = Math.floor((W - INFO_X - RIGHT_PAD - 2 * STAT_GAP) / 3); // 91
 
-const MONO = "'Courier New', Courier, monospace";
 const SANS = "'Helvetica Neue', Arial, sans-serif";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
@@ -59,6 +59,31 @@ function svgText(
   extra = '',
 ): string {
   return `<text x="${x}" y="${y}" font-family="${font}" font-size="${size}" fill="${fill}"${extra}>${esc(content)}</text>`;
+}
+
+function svgPixelText(
+  text: string,
+  x: number,
+  y: number,
+  color: string,
+  scale = 1,
+  letterGap = 1,
+): string {
+  const chars = text.toUpperCase();
+  const rects: string[] = [];
+
+  let cursorX = x;
+  for (const char of chars) {
+    for (const [pixelX, pixelY] of getGlyphPixels(char)) {
+      rects.push(
+        `<rect x="${cursorX + pixelX * scale}" y="${y + pixelY * scale}" width="${scale}" height="${scale}" fill="${color}"/>`,
+      );
+    }
+
+    cursorX += 5 * scale + letterGap;
+  }
+
+  return rects.join('');
 }
 
 function svgWrappedText(
@@ -117,8 +142,8 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
   const { styleBlock, groupsBlock } = serializeTreeFragment(layers, TREE_SCALE, 4);
 
   const stats = [
-    { label: 'COMMITS/YEAR', value: String(options.score) },
-    { label: 'TIER',         value: `${tier + 1}/6` },
+    { label: 'COMMITS/YEAR', value: options.score.toLocaleString() },
+    { label: 'TIER',         value: `${tier + 1} / 6` },
     { label: 'TYPE',         value: meta.type },
   ];
 
@@ -127,14 +152,13 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
       const x = INFO_X + i * (STAT_W + STAT_GAP);
       return [
         `<rect x="${x}" y="${STAT_TOP}" width="${STAT_W}" height="${STAT_H}" fill="#050a14" stroke="#1e2d50" stroke-width="1"/>`,
-        svgText(x + 4, STAT_TOP + 10, stat.label, '#6a9fd8', 6.5, MONO, ' letter-spacing="0.3"'),
-        svgText(x + 4, STAT_TOP + 31, stat.value, '#00ff9d', 11, MONO, ' font-weight="bold"'),
+        svgPixelText(stat.label, x + 6, STAT_TOP + 6, '#6a9fd8', 1, 1),
+        svgPixelText(stat.value, x + 6, STAT_TOP + 22, '#00ff9d', 1, 1),
       ].join('');
     })
     .join('');
 
-  // First-line baseline of description: statBottom(96) + gap(8) + fontSize(10) = 114
-  const descBaselineY = STAT_TOP + STAT_H + 18;
+  const descY = STAT_TOP + STAT_H + 8;
 
   return [
     `<?xml version="1.0" encoding="UTF-8"?>`,
@@ -155,14 +179,14 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
     groupsBlock,
     `</g>`,
     // Tree name + username
-    svgText(INFO_X, 22, meta.name, meta.color, 9, MONO, ' font-weight="bold" letter-spacing="0.8"'),
-    svgText(INFO_X, 37, `@${options.username}`, '#6a9fd8', 9, MONO),
+    svgPixelText(meta.name, INFO_X, 16, meta.color, 1, 1),
+    svgPixelText(`@${options.username}`, INFO_X, 30, '#6a9fd8', 1, 1),
     // Stats blocks
     statsBlocks,
     // Description (2-line word-wrapped)
-    svgWrappedText(INFO_X, descBaselineY, meta.cardDescription, '#6a9fd8', 10, SANS, 47, 2, 14),
+    svgWrappedText(INFO_X, descY, meta.cardDescription, '#6a9fd8', 12, SANS, 47, 2, 12),
     // Footer
-    svgText(INFO_X, H - 9, 'GITHUB PIXEL TREE', '#4a6080', 6.5, MONO, ' letter-spacing="0.5"'),
+    svgPixelText('GITHUB PIXEL TREE', INFO_X, H - 14, '#4a6080', 1, 1),
     `</svg>`,
   ].join('\n');
 }
