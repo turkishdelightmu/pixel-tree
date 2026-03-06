@@ -63,7 +63,7 @@ export default function HomePage() {
   }
 
   const snippetUser = activeUser || 'username';
-  const snippetVersion = '20260306-activity-year-v1';
+  const snippetVersion = '20260306-theme-ui-v2';
   const darkCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark&v=${snippetVersion}`;
   const lightCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light&v=${snippetVersion}`;
   const snippetText = [

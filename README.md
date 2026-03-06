@@ -103,7 +103,7 @@ If the variable is missing or invalid, Pixel Tree falls back to the default thre
 
 ## 📷 API Usage
 
-### Tree Image
+### Tree Image (PNG default)
 
 ```http
 GET /api/tree?user=<github_username>
@@ -115,35 +115,85 @@ Example:
 https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu
 ```
 
+Returns a PNG tree image by default.
+
+### Response Formats
+
+```http
+GET /api/tree?user=<github_username>&format=png
+GET /api/tree?user=<github_username>&format=svg
+GET /api/tree?user=<github_username>&format=json
+```
+
+Example JSON response:
+
+```json
+{
+  "user": "turkishdelightmu",
+  "score": 179,
+  "tier": 1,
+  "treeName": "Sakura"
+}
+```
+
+### Card View
+
+Use `view=card` to render the profile card instead of the standalone tree:
+
+```http
+GET /api/tree?user=<github_username>&view=card
+GET /api/tree?user=<github_username>&view=card&size=md
+GET /api/tree?user=<github_username>&view=card&format=svg
+```
+
+Supported card params:
+
+- `view=card` renders the stat card instead of the standalone tree
+- `format=png|svg|json` chooses the response format
+- `size=sm|md` controls PNG card size
+- `theme=dark|light` applies to SVG card output
+
 ### Embed Tree Card in GitHub README
 
 Use the `<picture>` element so GitHub automatically serves the dark or light card based on the viewer's system theme:
 
 <picture>
-  <source media="(prefers-color-scheme: dark)" srcset="https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=dark&v=20260306-activity-year-v1" />
-  <source media="(prefers-color-scheme: light)" srcset="https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=light&v=20260306-activity-year-v1" />
-  <img alt="GitHub Pixel Tree" src="https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=light&v=20260306-activity-year-v1" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=dark&v=20260306-theme-ui-v2" />
+  <source media="(prefers-color-scheme: light)" srcset="https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=light&v=20260306-theme-ui-v2" />
+  <img alt="GitHub Pixel Tree" src="https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=light&v=20260306-theme-ui-v2" />
 </picture>
 
 Or pin a single theme with `?theme=dark` / `?theme=light`:
 
 ```http
-https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light&v=20260306-activity-year-v1
+https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light&v=20260306-theme-ui-v2
 ```
+
+### Preview / Demo Endpoints
+
+The website uses preview tiers internally to show sample trees without a username:
+
+```http
+GET /api/tree?previewTier=0
+GET /api/tree?previewTier=3&format=svg
+GET /api/tree?previewTier=2&view=card&format=svg&theme=light
+```
+
+Valid preview tiers are `0` through `5`.
 
 ## 🚀 Future Updates
 
 This roadmap is based on planned PDR future updates.
 
-| Version | Feature        | Description                                                                      |
-| ------- | -------------- | -------------------------------------------------------------------------------- |
-| ✅ v1.1 | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal |
+| Version | Feature        | Description                                                                          |
+| ------- | -------------- | ------------------------------------------------------------------------------------ |
+| ✅ v1.1 | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal     |
 | ✅ v1.2 | Theme System   | Light / dark background themes via `?theme=` param — auto-switches in GitHub READMEs |
-| v1.3    | Custom Tiers   | User-configurable tier thresholds via query params                               |
-| v2.0    | Streak Mode    | Tree health also factors in current streak (days in a row with commits)          |
-| v2.1    | Language Trees | Tree species based on most-used programming language                             |
-| v2.2    | Seasonal Mode  | Tree automatically changes season based on current month                         |
-| v2.3    | OG Image API   | Social preview card with the tree for sharing on Twitter/LinkedIn                |
+| v1.3    | Custom Tiers   | User-configurable tier thresholds via query params                                   |
+| v2.0    | Streak Mode    | Tree health also factors in current streak (days in a row with commits)              |
+| v2.1    | Language Trees | Tree species based on most-used programming language                                 |
+| v2.2    | Seasonal Mode  | Tree automatically changes season based on current month                             |
+| v2.3    | OG Image API   | Social preview card with the tree for sharing on Twitter/LinkedIn                    |
 
 ## 🧭 Issues & Contributor Entry Points
 
