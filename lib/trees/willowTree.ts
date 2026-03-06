@@ -76,11 +76,11 @@ export function buildWillowLayers(): TreeLayer[] {
   }
 
   return [
-    { id: 'ground', shapes: ground },
-    { id: 'trunk', shapes: trunk },
-    { id: 'canopy', shapes: canopy },
-    { id: 'strands', shapes: strands },
-    { id: 'strand-tips', shapes: strandTips },
+    { id: 'ground',      shapes: ground },
+    { id: 'trunk',       shapes: trunk },
+    { id: 'canopy',      shapes: canopy },
+    { id: 'strands',     shapes: strands,    animation: { type: 'sway', duration: 4 } },
+    { id: 'strand-tips', shapes: strandTips, animation: { type: 'sway', duration: 4, delay: 0.4 } },
   ];
 }
 

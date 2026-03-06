@@ -134,14 +134,21 @@ export default function HomePage() {
       {/* PREVIEW PANEL */}
       <div className="bg-panel border-2 border-border p-9 mb-[60px] flex gap-11 items-center flex-wrap">
         <div className="relative shrink-0 w-[120px] h-[150px] flex items-center justify-center bg-black/40 border-2 border-border">
+          {activeUser && imgStatus === 'loaded' && (
+            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 font-pixel text-[6px] px-[6px] py-[3px] bg-black/80 tracking-[1px]"
+              style={{ color: '#00ff9d', border: '1px solid #00ff9d44' }}>
+              ANIMATED
+            </span>
+          )}
           {activeUser && imgStatus !== 'error' ? (
             <>
               {imgStatus === 'loading' && (
                 <div className="absolute font-pixel text-[7px] text-muted animate-pulse">GROWING…</div>
               )}
+              {/* SVG src triggers CSS animations in the browser */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={`/api/tree?user=${encodeURIComponent(activeUser)}`}
+                src={`/api/tree?user=${encodeURIComponent(activeUser)}&format=svg`}
                 alt={`${activeUser}'s pixel tree`}
                 width={104} height={130}
                 style={{ imageRendering: 'pixelated', opacity: imgStatus === 'loaded' ? 1 : 0, transition: 'opacity 0.3s' }}

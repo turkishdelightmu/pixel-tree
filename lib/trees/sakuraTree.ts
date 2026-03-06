@@ -77,11 +77,11 @@ export function buildSakuraLayers(): TreeLayer[] {
   }
 
   return [
-    { id: 'ground', shapes: ground },
-    { id: 'trunk', shapes: trunk },
-    { id: 'canopy-shadow', shapes: blossomShadow },
+    { id: 'ground',           shapes: ground },
+    { id: 'trunk',            shapes: trunk },
+    { id: 'canopy-shadow',    shapes: blossomShadow },
     { id: 'canopy-highlight', shapes: blossomMid },
-    { id: 'petals', shapes: petals },
+    { id: 'petals',           shapes: petals, animation: { type: 'fall', duration: 3 } },
   ];
 }
 
