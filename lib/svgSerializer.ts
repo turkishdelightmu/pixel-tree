@@ -43,32 +43,27 @@ function shapeToRect(shape: TreeShape, s: number): string {
   return `<rect x="${shape.x * s}" y="${shape.y * s}" width="${shape.width * s}" height="${shape.height * s}" fill="${shape.color}"/>`;
 }
 
-/**
- * Converts a tree's layer array into a self-contained animated SVG string.
- *
- * @param layers  Output of any `buildXxxLayers()` function.
- * @param scale   Pixels per grid unit (default 6 → 384×480 px output).
- */
-export function serializeTreeToSVG(
+// Shared inner builder — returns the <style> block and array of <g> strings.
+// pixelScale: one grid unit → N screen pixels (used for rect positions & sizes).
+// animScale:  controls @keyframes translation distances — defaults to pixelScale.
+//             Set independently so a small-scale embed can still have visible motion.
+function buildLayerContent(
   layers: readonly TreeLayer[],
-  scale = DEFAULT_SCALE,
-): string {
-  const w = 64 * scale;
-  const h = 80 * scale;
-
-  // Collect only the animation types that are actually used.
+  pixelScale: number,
+  animScale = pixelScale,
+): { styleBlock: string; groups: string[] } {
   const usedTypes = new Set<AnimationType>();
   for (const layer of layers) {
     if (layer.animation) usedTypes.add(layer.animation.type);
   }
 
-  const kf = buildKeyframes(scale);
+  const kf = buildKeyframes(animScale);
   const styleLines: string[] = [];
   Array.from(usedTypes).forEach((type) => styleLines.push(kf[type]));
 
   const groups: string[] = [];
   for (const layer of layers) {
-    const rects = layer.shapes.map((s) => shapeToRect(s, scale)).join('');
+    const rects = layer.shapes.map((s) => shapeToRect(s, pixelScale)).join('');
 
     let extra = '';
     if (layer.animation) {
@@ -81,13 +76,45 @@ export function serializeTreeToSVG(
     groups.push(`<g id="layer-${layer.id}"${extra}>${rects}</g>`);
   }
 
-  const style = styleLines.length > 0 ? `<style>${styleLines.join('')}</style>` : '';
+  return {
+    styleBlock: styleLines.length > 0 ? `<style>${styleLines.join('')}</style>` : '',
+    groups,
+  };
+}
+
+/**
+ * Converts a tree's layer array into a self-contained animated SVG string.
+ *
+ * @param layers  Output of any `buildXxxLayers()` function.
+ * @param scale   Pixels per grid unit (default 6 → 384×480 px output).
+ */
+export function serializeTreeToSVG(
+  layers: readonly TreeLayer[],
+  scale = DEFAULT_SCALE,
+): string {
+  const w = 64 * scale;
+  const h = 80 * scale;
+  const { styleBlock, groups } = buildLayerContent(layers, scale, scale);
 
   return [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img">`,
-    style,
+    styleBlock,
     ...groups,
     `</svg>`,
   ].join('\n');
+}
+
+/**
+ * Returns the animated layer content for embedding inside a larger SVG.
+ * Use this instead of `serializeTreeToSVG` when the tree must live inside
+ * an outer SVG document (e.g. a card renderer).
+ */
+export function serializeTreeFragment(
+  layers: readonly TreeLayer[],
+  scale = DEFAULT_SCALE,
+  animScale = scale,
+): { styleBlock: string; groupsBlock: string } {
+  const { styleBlock, groups } = buildLayerContent(layers, scale, animScale);
+  return { styleBlock, groupsBlock: groups.join('\n') };
 }

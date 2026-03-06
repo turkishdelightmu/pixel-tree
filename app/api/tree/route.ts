@@ -8,6 +8,7 @@ import { validateUsername } from '@/lib/githubUsername';
 import { isValidTreeTier, buildTreeLayers } from '@/lib/trees';
 import { TREE_METADATA } from '@/lib/treeMetadata';
 import { serializeTreeToSVG } from '@/lib/svgSerializer';
+import { renderTreeCardSVG } from '@/lib/cardSvgRenderer';
 
 // Next.js App Router: no static caching — every request is dynamic
 export const dynamic = 'force-dynamic';
@@ -91,8 +92,17 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
     if (responseFormat === 'svg') {
       try {
-        const svg = serializeTreeToSVG(buildTreeLayers(previewTier));
-        return svgResponse(svg, 'public, max-age=3600, stale-while-revalidate=86400');
+        const svg = view === 'card'
+          ? renderTreeCardSVG({
+              username: 'preview',
+              score: TREE_METADATA[previewTier].previewCommitsValue,
+              tier: previewTier,
+            })
+          : serializeTreeToSVG(buildTreeLayers(previewTier));
+        const svgCache = view === 'card'
+          ? 'public, max-age=60, stale-while-revalidate=300'
+          : 'public, max-age=3600, stale-while-revalidate=86400';
+        return svgResponse(svg, svgCache);
       } catch (err) {
         console.error('[api/tree] preview svg render error:', err);
         return errorPng('Failed to render preview SVG', 500);
@@ -206,8 +216,13 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 
   if (responseFormat === 'svg') {
     try {
-      const svg = serializeTreeToSVG(buildTreeLayers(tier));
-      return svgResponse(svg, 'public, max-age=3600, stale-while-revalidate=86400');
+      const svg = view === 'card'
+        ? renderTreeCardSVG({ username: user, score, tier })
+        : serializeTreeToSVG(buildTreeLayers(tier));
+      const svgCache = view === 'card'
+        ? 'public, max-age=60, stale-while-revalidate=300'
+        : 'public, max-age=3600, stale-while-revalidate=86400';
+      return svgResponse(svg, svgCache);
     } catch (err) {
       console.error('[api/tree] svg render error:', err);
       return errorPng('Failed to render SVG', 500);
