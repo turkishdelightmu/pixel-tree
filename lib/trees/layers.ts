@@ -18,9 +18,22 @@ export type TreePixelShape = {
 
 export type TreeShape = TreeRectShape | TreePixelShape
 
+/** CSS animation applied to an entire tree layer group in the SVG output. */
+export type AnimationType = 'sway' | 'float' | 'twinkle' | 'fall' | 'drift' | 'pulse'
+
+export type AnimationSpec = {
+  type: AnimationType
+  /** Duration in seconds (defaults vary per type). */
+  duration?: number
+  /** Delay in seconds before the animation starts. */
+  delay?: number
+}
+
 export type TreeLayer = {
   id: string
   shapes: readonly TreeShape[]
+  /** When present, this layer will be animated in the SVG serializer. */
+  animation?: AnimationSpec
 }
 
 export function rect(x: number, y: number, width: number, height: number, color: string): TreeRectShape {

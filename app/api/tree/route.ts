@@ -5,13 +5,25 @@ import { renderTree } from '@/lib/renderer';
 import { renderTreeCard } from '@/lib/cardRenderer';
 import { checkRateLimit, getCachedScore, setCachedScore } from '@/lib/rateLimiter';
 import { validateUsername } from '@/lib/githubUsername';
-import { isValidTreeTier } from '@/lib/trees';
+import { isValidTreeTier, buildTreeLayers } from '@/lib/trees';
 import { TREE_METADATA } from '@/lib/treeMetadata';
+import { serializeTreeToSVG } from '@/lib/svgSerializer';
 
 // Next.js App Router: no static caching — every request is dynamic
 export const dynamic = 'force-dynamic';
 
-type ResponseFormat = 'png' | 'json';
+type ResponseFormat = 'png' | 'json' | 'svg';
+
+function svgResponse(svg: string, cacheControl: string): NextResponse {
+  return new NextResponse(svg, {
+    status: 200,
+    headers: {
+      'Content-Type': 'image/svg+xml; charset=utf-8',
+      'Cache-Control': cacheControl,
+      'X-Content-Type-Options': 'nosniff',
+    },
+  });
+}
 
 function errorPng(message: string, status: number): NextResponse {
   return new NextResponse(message, {
@@ -31,6 +43,9 @@ function parseResponseFormat(searchParams: URLSearchParams): ResponseFormat | nu
   }
   if (format === 'json') {
     return 'json';
+  }
+  if (format === 'svg') {
+    return 'svg';
   }
 
   return null;
@@ -58,7 +73,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const cardSize = searchParams.get('size') === 'md' ? 'md' : 'sm';
 
   if (!responseFormat) {
-    return errorPng('Unsupported format. Use png or json.', 400);
+    return errorPng('Unsupported format. Use png, json or svg.', 400);
   }
 
   if (previewTier !== null) {
@@ -72,6 +87,16 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         tier: previewTier,
         treeName: TREE_METADATA[previewTier].name,
       });
+    }
+
+    if (responseFormat === 'svg') {
+      try {
+        const svg = serializeTreeToSVG(buildTreeLayers(previewTier));
+        return svgResponse(svg, 'public, max-age=3600, stale-while-revalidate=86400');
+      } catch (err) {
+        console.error('[api/tree] preview svg render error:', err);
+        return errorPng('Failed to render preview SVG', 500);
+      }
     }
 
     try {
@@ -177,6 +202,16 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
         },
       },
     );
+  }
+
+  if (responseFormat === 'svg') {
+    try {
+      const svg = serializeTreeToSVG(buildTreeLayers(tier));
+      return svgResponse(svg, 'public, max-age=3600, stale-while-revalidate=86400');
+    } catch (err) {
+      console.error('[api/tree] svg render error:', err);
+      return errorPng('Failed to render SVG', 500);
+    }
   }
 
   let png: Buffer;

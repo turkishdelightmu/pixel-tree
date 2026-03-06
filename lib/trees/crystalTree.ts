@@ -66,12 +66,12 @@ export function buildCrystalLayers(): TreeLayer[] {
   for (const [x, y, color] of sparkleDefs) sparkles.push(pixel(x, y, color));
 
   return [
-    { id: 'ground', shapes: ground },
-    { id: 'trunk', shapes: trunk },
-    { id: 'roots', shapes: roots },
-    { id: 'canopy', shapes: canopy },
-    { id: 'particles', shapes: particles },
-    { id: 'sparkles', shapes: sparkles },
+    { id: 'ground',    shapes: ground },
+    { id: 'trunk',     shapes: trunk },
+    { id: 'roots',     shapes: roots },
+    { id: 'canopy',    shapes: canopy },
+    { id: 'particles', shapes: particles, animation: { type: 'float',   duration: 3 } },
+    { id: 'sparkles',  shapes: sparkles,  animation: { type: 'twinkle', duration: 2 } },
   ];
 }
 

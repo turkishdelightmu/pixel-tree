@@ -72,7 +72,7 @@ describe('GET /api/tree', () => {
   })
   test('returns 400 for unsupported formats', async () => {
     const { GET } = await import('./route')
-    const request = new NextRequest('http://localhost:3000/api/tree?user=octocat&format=svg')
+    const request = new NextRequest('http://localhost:3000/api/tree?user=octocat&format=gif')
 
     const response = await GET(request)
 
