@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { validateUsername } from '@/lib/githubUsername';
 import { MAX_TREE_TIER, TREE_METADATA } from '@/lib/treeMetadata';
 
@@ -20,6 +20,19 @@ export default function HomePage() {
   const [activeScore, setActiveScore] = useState<number | null>(null);
   const [copyStatus, setCopyStatus]  = useState<'idle' | 'copied' | 'error'>('idle');
   const [imgStatus, setImgStatus]    = useState<'idle'|'loading'|'loaded'|'error'>('idle');
+  const [baseUrl, setBaseUrl] = useState('https://pixel-tree-jet.vercel.app');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.location.origin) {
+      setBaseUrl(window.location.origin);
+      return;
+    }
+
+    const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim() ?? '';
+    if (envBase && !envBase.includes('localhost') && !envBase.includes('127.0.0.1')) {
+      setBaseUrl(envBase.replace(/\/$/, ''));
+    }
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -48,14 +61,10 @@ export default function HomePage() {
     }
   }
 
-  const envBase = process.env.NEXT_PUBLIC_BASE_URL?.trim() ?? '';
-  const BASE = (envBase && !envBase.includes('localhost') && !envBase.includes('127.0.0.1'))
-    ? envBase.replace(/\/$/, '')
-    : 'https://pixel-tree-jet.vercel.app';
   const snippetUser = activeUser || 'username';
   const snippetVersion = '20260306-theme-v2';
-  const darkCardUrl = `${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark&v=${snippetVersion}`;
-  const lightCardUrl = `${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light&v=${snippetVersion}`;
+  const darkCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark&v=${snippetVersion}`;
+  const lightCardUrl = `${baseUrl}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light&v=${snippetVersion}`;
   const snippetText = [
     `<picture>`,
     `  <source media="(prefers-color-scheme: dark)" srcset="${darkCardUrl}" />`,
