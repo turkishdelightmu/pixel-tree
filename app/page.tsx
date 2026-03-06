@@ -53,11 +53,14 @@ export default function HomePage() {
     ? envBase.replace(/\/$/, '')
     : 'https://pixel-tree-jet.vercel.app';
   const snippetUser = activeUser || 'username';
+  const snippetVersion = '20260306-theme-v2';
+  const darkCardUrl = `${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark&v=${snippetVersion}`;
+  const lightCardUrl = `${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light&v=${snippetVersion}`;
   const snippetText = [
     `<picture>`,
-    `  <source media="(prefers-color-scheme: dark)" srcset="${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark" />`,
-    `  <source media="(prefers-color-scheme: light)" srcset="${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light" />`,
-    `  <img alt="GitHub Pixel Tree" src="${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark" />`,
+    `  <source media="(prefers-color-scheme: dark)" srcset="${darkCardUrl}" />`,
+    `  <source media="(prefers-color-scheme: light)" srcset="${lightCardUrl}" />`,
+    `  <img alt="GitHub Pixel Tree" src="${lightCardUrl}" />`,
     `</picture>`,
   ].join('\n');
 

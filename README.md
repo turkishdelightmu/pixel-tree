@@ -122,18 +122,18 @@ Use the `<picture>` element so GitHub automatically serves the dark or light car
 ```html
 <picture>
   <source media="(prefers-color-scheme: dark)"
-          srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=dark" />
+    srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=dark&v=20260306-theme-v2" />
   <source media="(prefers-color-scheme: light)"
-          srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light" />
+    srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light&v=20260306-theme-v2" />
   <img alt="GitHub Pixel Tree"
-       src="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=dark" />
+       src="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light&v=20260306-theme-v2" />
 </picture>
 ```
 
 Or pin a single theme with `?theme=dark` / `?theme=light`:
 
 ```http
-https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light
+https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light&v=20260306-theme-v2
 ```
 
 ## 🚀 Future Updates
