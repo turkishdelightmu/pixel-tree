@@ -49,18 +49,6 @@ function esc(str: string): string {
     .replace(/"/g, '&quot;');
 }
 
-function svgText(
-  x: number,
-  y: number,
-  content: string,
-  fill: string,
-  size: number,
-  font: string,
-  extra = '',
-): string {
-  return `<text x="${x}" y="${y}" font-family="${font}" font-size="${size}" fill="${fill}"${extra}>${esc(content)}</text>`;
-}
-
 function svgPixelText(
   text: string,
   x: number,
