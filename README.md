@@ -116,7 +116,7 @@ https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu
 
 ### Embed Tree Card in GitHub README
 
-![GitHub Pixel Tree](https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&v=20260306-card-svg)
+![GitHub Pixel Tree](https://pixel-tree-git-development-ilaydas-projects-759abe54.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&v=20260306-card-svg-2)
 
 ## 🚀 Future Updates
 
