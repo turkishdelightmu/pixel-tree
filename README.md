@@ -119,16 +119,11 @@ https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu
 
 Use the `<picture>` element so GitHub automatically serves the dark or light card based on the viewer's system theme:
 
-```html
 <picture>
-  <source media="(prefers-color-scheme: dark)"
-    srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=dark&v=20260306-theme-v2" />
-  <source media="(prefers-color-scheme: light)"
-    srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light&v=20260306-theme-v2" />
-  <img alt="GitHub Pixel Tree"
-       src="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light&v=20260306-theme-v2" />
+  <source media="(prefers-color-scheme: dark)" srcset="https://pixel-tree-nbahj92tt-ilaydas-projects-759abe54.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=dark&v=20260306-theme-v2" />
+  <source media="(prefers-color-scheme: light)" srcset="https://pixel-tree-nbahj92tt-ilaydas-projects-759abe54.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=light&v=20260306-theme-v2" />
+  <img alt="GitHub Pixel Tree" src="https://pixel-tree-nbahj92tt-ilaydas-projects-759abe54.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&theme=light&v=20260306-theme-v2" />
 </picture>
-```
 
 Or pin a single theme with `?theme=dark` / `?theme=light`:
 
