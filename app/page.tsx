@@ -116,7 +116,7 @@ export default function HomePage() {
         </div>
         <h1 className="font-pixel text-text mb-5 leading-[1.4] dark:text-white"
             style={{ fontSize: 'clamp(24px,4.2vw,44px)' }}>
-          YOUR COMMITS<br />
+          YOUR ACTIVITY<br />
           <span className="text-accent">GROW A TREE</span>
         </h1>
           <p className="text-muted max-w-[680px] mx-auto mb-9 leading-[1.7]"
@@ -227,7 +227,7 @@ export default function HomePage() {
       <div className="grid grid-cols-3 gap-4 mb-[70px] max-[600px]:grid-cols-1">
         {([
           ['01', 'ENTER USERNAME',         'Type any public GitHub username. No login or auth required — we query the public API server-side.'],
-          ['02', 'WE FETCH YOUR COMMITS',  'Your past year of contributions is analyzed. The total determines your tree tier automatically.'],
+          ['02', 'WE ANALYZE YOUR ACTIVITY', 'Your past year of contributions is analyzed. The total determines your tree tier automatically.'],
           ['03', 'EMBED IN README',         'Copy the HTML snippet and paste it in your GitHub profile README. GitHub automatically shows the dark or light card based on the viewer\'s theme.'],
         ] as const).map(([num, title, body]) => (
           <div key={num} className="border-2 border-border bg-panel p-7 px-5">
