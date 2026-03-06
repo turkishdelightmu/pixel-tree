@@ -6,6 +6,16 @@ jest.mock('@octokit/graphql', () => ({
 
 import { GitHubError, mapGitHubApiError } from './github'
 
+function getGraphqlDefaultsMock(): jest.Mock {
+  const mockedModule = jest.requireMock('@octokit/graphql') as {
+    graphql: {
+      defaults: jest.Mock
+    }
+  }
+
+  return mockedModule.graphql.defaults
+}
+
 describe('mapGitHubApiError', () => {
   test('maps abort-like errors to timeout', () => {
     const error = mapGitHubApiError({ name: 'AbortError' })
@@ -46,9 +56,6 @@ describe('fetchContributions', () => {
   })
 
   test('passes an abort signal to the GitHub request', async () => {
-    const graphqlModule = await import('@octokit/graphql') as {
-      graphql: { defaults: jest.Mock }
-    }
     const graphqlRequest = jest.fn().mockResolvedValue({
       user: {
         contributionsCollection: {
@@ -60,7 +67,8 @@ describe('fetchContributions', () => {
       },
       rateLimit: { remaining: 4999, resetAt: new Date().toISOString() },
     })
-    graphqlModule.graphql.defaults.mockReturnValue(graphqlRequest)
+    const graphqlDefaultsMock = getGraphqlDefaultsMock()
+    graphqlDefaultsMock.mockReturnValue(graphqlRequest)
 
     const { fetchContributions } = await import('./github')
     const score = await fetchContributions('octocat')
@@ -75,10 +83,8 @@ describe('fetchContributions', () => {
       }),
     )
   })
+
   test('reuses the configured GraphQL client across requests', async () => {
-    const graphqlModule = await import('@octokit/graphql') as {
-      graphql: { defaults: jest.Mock }
-    }
     const graphqlRequest = jest.fn().mockResolvedValue({
       user: {
         contributionsCollection: {
@@ -90,13 +96,14 @@ describe('fetchContributions', () => {
       },
       rateLimit: { remaining: 4999, resetAt: new Date().toISOString() },
     })
-    graphqlModule.graphql.defaults.mockReturnValue(graphqlRequest)
+    const graphqlDefaultsMock = getGraphqlDefaultsMock()
+    graphqlDefaultsMock.mockReturnValue(graphqlRequest)
 
     const { fetchContributions } = await import('./github')
     await fetchContributions('octocat')
     await fetchContributions('defunkt')
 
-    expect(graphqlModule.graphql.defaults).toHaveBeenCalledTimes(1)
+    expect(graphqlDefaultsMock).toHaveBeenCalledTimes(1)
     expect(graphqlRequest).toHaveBeenCalledTimes(2)
   })
 })

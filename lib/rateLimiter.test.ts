@@ -1,14 +1,18 @@
 jest.mock('@upstash/ratelimit', () => {
   const limit = jest.fn()
+  const slidingWindow = jest.fn((): string => 'window')
 
   return {
     Ratelimit: class MockRatelimit {
-      static slidingWindow = jest.fn(() => 'window')
+      static slidingWindow = slidingWindow
 
-      constructor() {
-        return { limit }
+      limit = limit
+
+      constructor(_config: { redis: unknown; limiter: unknown; prefix: string }) {
+        void _config
       }
     },
+    __mockLimit: limit,
   }
 })
 
@@ -24,9 +28,10 @@ describe('checkRateLimit', () => {
   })
 
   test('fails closed when Redis-backed rate limiting is unavailable', async () => {
-    const { Ratelimit } = await import('@upstash/ratelimit')
-    const limitMock = new Ratelimit({}) as unknown as { limit: jest.Mock }
-    limitMock.limit.mockRejectedValueOnce(new Error('redis down'))
+    const ratelimitModule = jest.requireMock('@upstash/ratelimit') as {
+      __mockLimit: jest.Mock
+    }
+    ratelimitModule.__mockLimit.mockRejectedValueOnce(new Error('redis down'))
 
     const { checkRateLimit } = await import('./rateLimiter')
     const result = await checkRateLimit('127.0.0.1')
