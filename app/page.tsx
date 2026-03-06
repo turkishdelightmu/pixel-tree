@@ -53,7 +53,13 @@ export default function HomePage() {
     ? envBase.replace(/\/$/, '')
     : 'https://pixel-tree-jet.vercel.app';
   const snippetUser = activeUser || 'username';
-  const snippetText = `![GitHub Pixel Tree](${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&v=20260306-card-svg)`;
+  const snippetText = [
+    `<picture>`,
+    `  <source media="(prefers-color-scheme: dark)" srcset="${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark" />`,
+    `  <source media="(prefers-color-scheme: light)" srcset="${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=light" />`,
+    `  <img alt="GitHub Pixel Tree" src="${BASE}/api/tree?user=${snippetUser}&view=card&format=svg&theme=dark" />`,
+    `</picture>`,
+  ].join('\n');
 
   function copySnippet() {
     navigator.clipboard.writeText(snippetText).then(() => {
@@ -209,7 +215,7 @@ export default function HomePage() {
         {([
           ['01', 'ENTER USERNAME',         'Type any public GitHub username. No login or auth required — we query the public API server-side.'],
           ['02', 'WE FETCH YOUR COMMITS',  'Your past year of contributions is analyzed. The total determines your tree tier automatically.'],
-          ['03', 'EMBED IN README',         'Copy the markdown snippet and paste it in your GitHub profile README. The tree updates daily.'],
+          ['03', 'EMBED IN README',         'Copy the HTML snippet and paste it in your GitHub profile README. GitHub automatically shows the dark or light card based on the viewer\'s theme.'],
         ] as const).map(([num, title, body]) => (
           <div key={num} className="border-2 border-border bg-panel p-7 px-5">
             <span className="font-pixel text-[26px] text-accent opacity-20 mb-3 block">{num}</span>

@@ -3,11 +3,44 @@ import { serializeTreeFragment } from './svgSerializer';
 import { buildTreeLayers } from './trees';
 import { TREE_METADATA } from './treeMetadata';
 
+export type CardTheme = 'dark' | 'light';
+
 export interface CardSvgOptions {
   username: string;
   score: number;
   tier: number;
+  theme?: CardTheme;
 }
+
+interface CardPalette {
+  bg: string;
+  scanlineOpacity: string;
+  border: string;
+  frameFill: string;
+  label: string;
+  value: string;
+  footer: string;
+}
+
+const DARK_PALETTE: CardPalette = {
+  bg:              '#0a0e1a',
+  scanlineOpacity: '0.035',
+  border:          '#1e2d50',
+  frameFill:       '#050a14',
+  label:           '#6a9fd8',
+  value:           '#00ff9d',
+  footer:          '#4a6080',
+};
+
+const LIGHT_PALETTE: CardPalette = {
+  bg:              '#ffffff',
+  scanlineOpacity: '0',
+  border:          '#d0d7de',
+  frameFill:       '#f6f8fa',
+  label:           '#57606a',
+  value:           '#059669',
+  footer:          '#8c959f',
+};
 
 // ── Layout constants ─────────────────────────────────────────────────────────
 // Matches the sm preset in cardRenderer.ts (420×152, treeScale=1) so the
@@ -124,6 +157,7 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
   const tier = Math.max(0, Math.min(5, options.tier));
   const meta = TREE_METADATA[tier];
   const layers = buildTreeLayers(tier);
+  const p = options.theme === 'light' ? LIGHT_PALETTE : DARK_PALETTE;
 
   // Animated tree inner content: pixels at scale=1, but animation distances use
   // animScale=4 so that sway/fall/drift motions are clearly visible (not 1px).
@@ -139,14 +173,14 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
     .map((stat, i) => {
       const x = INFO_X + i * (STAT_W + STAT_GAP);
       return [
-        `<rect x="${x}" y="${STAT_TOP}" width="${STAT_W}" height="${STAT_H}" fill="#050a14" stroke="#1e2d50" stroke-width="1"/>`,
-        svgPixelText(stat.label, x + 6, STAT_TOP + 6, '#6a9fd8', 1, 1),
-        svgPixelText(stat.value, x + 6, STAT_TOP + 22, '#00ff9d', 1, 1),
+        `<rect x="${x}" y="${STAT_TOP}" width="${STAT_W}" height="${STAT_H}" fill="${p.frameFill}" stroke="${p.border}" stroke-width="1"/>`,
+        svgPixelText(stat.label, x + 6, STAT_TOP + 6, p.label, 1, 1),
+        svgPixelText(stat.value, x + 6, STAT_TOP + 22, p.value, 1, 1),
       ].join('');
     })
     .join('');
 
-  const descY = STAT_TOP + STAT_H + 8;
+  const descY = STAT_TOP + STAT_H + 16;
 
   return [
     `<?xml version="1.0" encoding="UTF-8"?>`,
@@ -154,27 +188,27 @@ export function renderTreeCardSVG(options: CardSvgOptions): string {
     // Keyframe animations for all animated layers in the tree
     styleBlock,
     // CRT scanlines pattern
-    `<defs><pattern id="sl" width="1" height="3" patternUnits="userSpaceOnUse"><rect width="1" height="1" fill="rgb(0,255,157)" fill-opacity="0.035"/></pattern></defs>`,
+    `<defs><pattern id="sl" width="1" height="3" patternUnits="userSpaceOnUse"><rect width="1" height="1" fill="rgb(0,255,157)" fill-opacity="${p.scanlineOpacity}"/></pattern></defs>`,
     // Card background
-    `<rect width="${W}" height="${H}" fill="#0a0e1a"/>`,
+    `<rect width="${W}" height="${H}" fill="${p.bg}"/>`,
     `<rect width="${W}" height="${H}" fill="url(#sl)"/>`,
     // Card border
-    `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" fill="none" stroke="#1e2d50" stroke-width="2"/>`,
+    `<rect x="1" y="1" width="${W - 2}" height="${H - 2}" fill="none" stroke="${p.border}" stroke-width="2"/>`,
     // Tree frame
-    `<rect x="${TREE_FRAME_X}" y="${TREE_FRAME_Y}" width="${TREE_FRAME_W}" height="${TREE_FRAME_H}" fill="#050a14" stroke="#1e2d50" stroke-width="1"/>`,
+    `<rect x="${TREE_FRAME_X}" y="${TREE_FRAME_Y}" width="${TREE_FRAME_W}" height="${TREE_FRAME_H}" fill="${p.frameFill}" stroke="${p.border}" stroke-width="1"/>`,
     // Animated tree pixel layers
     `<g transform="translate(${TREE_X},${TREE_Y})">`,
     groupsBlock,
     `</g>`,
     // Tree name + username
-    svgPixelText(meta.name, INFO_X, 16, meta.color, 1, 1),
-    svgPixelText(`@${options.username}`, INFO_X, 30, '#6a9fd8', 1, 1),
+    svgPixelText(meta.name, INFO_X, 16, meta.color, 2, 2),
+    svgPixelText(`@${options.username}`, INFO_X, 37, p.label, 1, 1),
     // Stats blocks
     statsBlocks,
     // Description (2-line word-wrapped)
-    svgWrappedText(INFO_X, descY, meta.cardDescription, '#6a9fd8', 12, SANS, 47, 2, 12),
+    svgWrappedText(INFO_X, descY, meta.cardDescription, p.label, 10, SANS, 47, 2, 11),
     // Footer
-    svgPixelText('GITHUB PIXEL TREE', INFO_X, H - 14, '#4a6080', 1, 1),
+    svgPixelText('GITHUB PIXEL TREE', INFO_X, H - 14, p.footer, 1, 1),
     `</svg>`,
   ].join('\n');
 }

@@ -114,3 +114,40 @@ describe('renderTreeCardSVG', () => {
     expect(svg).toContain('fill="#4a6080"');
   });
 });
+
+describe('theme support', () => {
+  test('dark theme is default when no theme passed', () => {
+    const svg = renderTreeCardSVG({ username: 'u', score: 100, tier: 0 });
+    expect(svg).toContain('fill="#0a0e1a"');
+  });
+
+  test('dark theme is explicit when theme=dark', () => {
+    const svg = renderTreeCardSVG({ username: 'u', score: 100, tier: 0, theme: 'dark' });
+    expect(svg).toContain('fill="#0a0e1a"');
+  });
+
+  test('light theme sets white background', () => {
+    const svg = renderTreeCardSVG({ username: 'u', score: 100, tier: 0, theme: 'light' });
+    expect(svg).toContain('fill="#ffffff"');
+  });
+
+  test('light theme uses emerald #059669 for stat values', () => {
+    const svg = renderTreeCardSVG({ username: 'u', score: 100, tier: 0, theme: 'light' });
+    expect(svg).toContain('fill="#059669"');
+  });
+
+  test('light theme disables scanlines', () => {
+    const svg = renderTreeCardSVG({ username: 'u', score: 100, tier: 0, theme: 'light' });
+    expect(svg).toContain('fill-opacity="0"');
+  });
+
+  test('light theme uses github border color #d0d7de', () => {
+    const svg = renderTreeCardSVG({ username: 'u', score: 100, tier: 0, theme: 'light' });
+    expect(svg).toContain('#d0d7de');
+  });
+
+  test('dark theme still has scanlines', () => {
+    const svg = renderTreeCardSVG({ username: 'u', score: 100, tier: 0, theme: 'dark' });
+    expect(svg).toContain('fill-opacity="0.035"');
+  });
+});

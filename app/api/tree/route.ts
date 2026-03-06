@@ -72,6 +72,11 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   const responseFormat = parseResponseFormat(searchParams);
   const view = searchParams.get('view') === 'card' ? 'card' : 'tree';
   const cardSize = searchParams.get('size') === 'md' ? 'md' : 'sm';
+  const rawTheme = searchParams.get('theme');
+  if (rawTheme !== null && rawTheme !== 'dark' && rawTheme !== 'light') {
+    return errorPng('Invalid theme. Use dark or light.', 400);
+  }
+  const theme = rawTheme === 'light' ? 'light' : 'dark' as const;
 
   if (!responseFormat) {
     return errorPng('Unsupported format. Use png, json or svg.', 400);
@@ -97,6 +102,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
               username: 'preview',
               score: TREE_METADATA[previewTier].previewCommitsValue,
               tier: previewTier,
+              theme,
             })
           : serializeTreeToSVG(buildTreeLayers(previewTier));
         const svgCache = view === 'card'
@@ -217,7 +223,7 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
   if (responseFormat === 'svg') {
     try {
       const svg = view === 'card'
-        ? renderTreeCardSVG({ username: user, score, tier })
+        ? renderTreeCardSVG({ username: user, score, tier, theme })
         : serializeTreeToSVG(buildTreeLayers(tier));
       const svgCache = view === 'card'
         ? 'public, max-age=60, stale-while-revalidate=300'

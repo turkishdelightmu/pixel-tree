@@ -44,12 +44,13 @@ _Watch how your contributions grow into a tree!_
 </p>
 
 ## 🌳 Tree Types
-| Bare | Sakura | Willow |
-|-----|-----|-----|
+
+| Bare                                                                                       | Sakura                                                                                       | Willow                                                                                       |
+| ------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | ![](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/bare.png) | ![](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/sakura.png) | ![](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/willow.png) |
 
-| Oak | Redwood | Crystal |
-|-----|-----|-----|
+| Oak                                                                                       | Redwood                                                                                       | Crystal                                                                                       |
+| ----------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | ![](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/oak.png) | ![](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/redwood.png) | ![](https://github.com/turkishdelightmu/pixel-tree/blob/main/public/assets/trees/crystal.png) |
 
 ## 🚀 Quick Start
@@ -79,7 +80,7 @@ This project includes Jest tests (see `jest.config.ts`). Run them with:
 npm test
 ```
 
-## ⚙️ TIER_BOUNDARIES 
+## ⚙️ TIER_BOUNDARIES
 
 `TIER_BOUNDARIES` is a comma-separated list of 6 contribution thresholds used to map a score to tree tiers.
 
@@ -116,7 +117,24 @@ https://pixel-tree-jet.vercel.app/api/tree?user=turkishdelightmu
 
 ### Embed Tree Card in GitHub README
 
-![GitHub Pixel Tree](https://pixel-tree-git-development-ilaydas-projects-759abe54.vercel.app/api/tree?user=turkishdelightmu&view=card&format=svg&v=20260306-card-svg-2)
+Use the `<picture>` element so GitHub automatically serves the dark or light card based on the viewer's system theme:
+
+```html
+<picture>
+  <source media="(prefers-color-scheme: dark)"
+          srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=dark" />
+  <source media="(prefers-color-scheme: light)"
+          srcset="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light" />
+  <img alt="GitHub Pixel Tree"
+       src="https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=dark" />
+</picture>
+```
+
+Or pin a single theme with `?theme=dark` / `?theme=light`:
+
+```http
+https://pixel-tree-jet.vercel.app/api/tree?user=USERNAME&view=card&format=svg&theme=light
+```
 
 ## 🚀 Future Updates
 
@@ -124,8 +142,8 @@ This roadmap is based on planned PDR future updates.
 
 | Version | Feature        | Description                                                                      |
 | ------- | -------------- | -------------------------------------------------------------------------------- |
-| v1.1    | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal |
-| v1.2    | Theme System   | Light / dark / forest / night background themes via `?theme=` param              |
+| ✅ v1.1 | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal |
+| ✅ v1.2 | Theme System   | Light / dark background themes via `?theme=` param — auto-switches in GitHub READMEs |
 | v1.3    | Custom Tiers   | User-configurable tier thresholds via query params                               |
 | v2.0    | Streak Mode    | Tree health also factors in current streak (days in a row with commits)          |
 | v2.1    | Language Trees | Tree species based on most-used programming language                             |
