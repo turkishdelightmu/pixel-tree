@@ -1,5 +1,7 @@
 import { graphql } from '@octokit/graphql'
 
+const GITHUB_API_TIMEOUT_MS = 5000
+
 // GitHub username regex per their documented constraints
 const USERNAME_REGEX = /^[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,37}[a-zA-Z0-9])?$/
 
@@ -40,6 +42,35 @@ export function getRateLimitRemaining(): number {
   return _rateLimitRemaining
 }
 
+export function isAbortLikeError(err: unknown): boolean {
+  const apiError = err as { name?: string; message?: string }
+
+  return apiError.name === 'AbortError' || apiError.message === 'The operation was aborted'
+}
+
+export function mapGitHubApiError(err: unknown): GitHubError {
+  if (isAbortLikeError(err)) {
+    return new GitHubError(504, 'GitHub request timed out')
+  }
+
+  const apiError = err as { status?: number; message?: string }
+
+  if (apiError.status === 401) {
+    return new GitHubError(401, 'GitHub credentials rejected')
+  }
+  if (apiError.status === 403) {
+    return new GitHubError(403, 'GitHub access forbidden')
+  }
+  if (apiError.status === 404 || (apiError.message && apiError.message.includes('Could not resolve to a User'))) {
+    return new GitHubError(404, 'User not found')
+  }
+  if (apiError.status === 429) {
+    return new GitHubError(429, 'GitHub rate limit hit')
+  }
+
+  return new GitHubError(500, 'Internal server error')
+}
+
 const CONTRIBUTIONS_QUERY = `
   query($login: String!, $from: DateTime!, $to: DateTime!) {
     user(login: $login) {
@@ -56,6 +87,20 @@ const CONTRIBUTIONS_QUERY = `
     }
   }
 `
+
+let cachedGraphqlClient: ReturnType<typeof graphql.defaults> | null = null
+
+function getGraphqlClient(token: string): ReturnType<typeof graphql.defaults> {
+  if (cachedGraphqlClient) {
+    return cachedGraphqlClient
+  }
+
+  cachedGraphqlClient = graphql.defaults({
+    headers: { authorization: `token ${token}` },
+  })
+
+  return cachedGraphqlClient
+}
 
 /**
  * Fetches the total GitHub contribution score for a user over the past 365 days.
@@ -81,9 +126,9 @@ export async function fetchContributions(username: string): Promise<number> {
   const from = new Date(to)
   from.setFullYear(from.getFullYear() - 1)
 
-  const graphqlWithAuth = graphql.defaults({
-    headers: { authorization: `token ${token}` },
-  })
+  const graphqlWithAuth = getGraphqlClient(token)
+  const controller = new AbortController()
+  const timeoutId = setTimeout(() => controller.abort(), GITHUB_API_TIMEOUT_MS)
 
   try {
     const data = await graphqlWithAuth<ContributionsResponse>(
@@ -92,6 +137,9 @@ export async function fetchContributions(username: string): Promise<number> {
         login: username,
         from: from.toISOString(),
         to: to.toISOString(),
+        request: {
+          signal: controller.signal,
+        },
       },
     )
 
@@ -117,18 +165,8 @@ export async function fetchContributions(username: string): Promise<number> {
     // Re-throw our own errors untouched
     if (err instanceof GitHubError) throw err
 
-    const e = err as { status?: number; message?: string }
-
-    if (e.status === 401 || e.status === 403) {
-      throw new GitHubError(429, 'GitHub rate limit hit or bad credentials')
-    }
-    if (e.status === 404 || (e.message && e.message.includes('Could not resolve to a User'))) {
-      throw new GitHubError(404, 'User not found')
-    }
-    if (e.status === 429) {
-      throw new GitHubError(429, 'GitHub rate limit hit')
-    }
-
-    throw new GitHubError(500, 'Internal server error')
+    throw mapGitHubApiError(err)
+  } finally {
+    clearTimeout(timeoutId)
   }
 }

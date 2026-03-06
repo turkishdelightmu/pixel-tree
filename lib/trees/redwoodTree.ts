@@ -1,15 +1,5 @@
 import type { CanvasRenderingContext2D } from 'canvas';
-
-function px(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
-  if (!color || color === 'T') return;
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, 1, 1);
-}
-
-function r(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string) {
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, w, h);
-}
+import { px, r } from './helpers';
 
 export function drawRedwoodTree(ctx: CanvasRenderingContext2D): void {
   const Tk = '#3a1005', Tkm = '#521808', Tkl = '#6e2810', Tkh = '#8a4020', Tkhi = '#a85830';

@@ -1,15 +1,5 @@
 import type { CanvasRenderingContext2D } from 'canvas';
-
-function px(ctx: CanvasRenderingContext2D, x: number, y: number, color: string) {
-  if (!color || color === 'T') return;
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, 1, 1);
-}
-
-function r(ctx: CanvasRenderingContext2D, x: number, y: number, w: number, h: number, color: string) {
-  ctx.fillStyle = color;
-  ctx.fillRect(x, y, w, h);
-}
+import { px, r } from './helpers';
 
 export function drawBareTree(ctx: CanvasRenderingContext2D): void {
   const T = '#4a3828', Tm = '#3a2a1c', Td = '#2c1e12';
