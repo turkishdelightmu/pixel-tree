@@ -44,11 +44,18 @@ export function buildOakLayers(): TreeLayer[] {
     highlights.push(rect(x, 28 - bh, 6, bh, L3), rect(x + 1, 28 - bh - 2, 4, 2, L4));
   }
 
+  const leafFall: TreeShape[] = [
+    pixel(8,  30, L3), pixel(16, 35, L4), pixel(22, 22, L3), pixel(34, 18, L4),
+    pixel(46, 26, L3), pixel(52, 32, L4), pixel(28, 12, L3), pixel(40, 38, L4),
+    pixel(12, 42, L3), pixel(58, 20, L4), pixel(36, 44, L3), pixel(20,  8, L4),
+  ];
+
   return [
     { id: 'ground',     shapes: ground },
     { id: 'trunk',      shapes: trunk },
     { id: 'canopy',     shapes: canopy },
-    { id: 'highlights', shapes: highlights, animation: { type: 'pulse', duration: 6 } },
+    { id: 'highlights', shapes: highlights, animation: { type: 'twinkle', duration: 2 } },
+    { id: 'leaf-fall',  shapes: leafFall,   animation: { type: 'fall',    duration: 4 } },
   ];
 }
 

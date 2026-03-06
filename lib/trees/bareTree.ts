@@ -45,11 +45,19 @@ export function buildBareLayers(): TreeLayer[] {
     snow.push(rect(x, y, w, 1, Sl), rect(x + 1, y + 1, w - 1, 1, S));
   }
 
+  const snowfall: TreeShape[] = [
+    pixel(10,  5, Sl), pixel(20, 10, S),  pixel(48,  8, Sl), pixel(36,  3, S),
+    pixel( 8, 20, Sl), pixel(52, 16, S),  pixel(14, 32, Sl), pixel(44, 28, S),
+    pixel( 6, 45, S),  pixel(56, 40, Sl), pixel(18, 55, S),  pixel(42, 50, Sl),
+    pixel(26, 15, Sl), pixel(38, 18, S),  pixel(22, 42, Sl), pixel(50, 60, S),
+  ];
+
   return [
     { id: 'ground',   shapes: ground },
     { id: 'trunk',    shapes: trunk },
-    { id: 'branches', shapes: branches },
-    { id: 'snow',     shapes: snow, animation: { type: 'drift', duration: 5 } },
+    { id: 'branches', shapes: branches, animation: { type: 'sway',  duration: 7 } },
+    { id: 'snow',     shapes: snow,     animation: { type: 'drift', duration: 5 } },
+    { id: 'snowfall', shapes: snowfall, animation: { type: 'fall',  duration: 6 } },
   ];
 }
 

@@ -47,8 +47,8 @@ describe('isValidTreeTier', () => {
   })
 
   test('all newly migrated trees produce non-empty layers', () => {
-    expect(buildBareLayers().map((l) => l.id)).toEqual(['ground', 'trunk', 'branches', 'snow'])
-    expect(buildOakLayers().map((l) => l.id)).toEqual(['ground', 'trunk', 'canopy', 'highlights'])
+    expect(buildBareLayers().map((l) => l.id)).toEqual(['ground', 'trunk', 'branches', 'snow', 'snowfall'])
+    expect(buildOakLayers().map((l) => l.id)).toEqual(['ground', 'trunk', 'canopy', 'highlights', 'leaf-fall'])
     expect(buildRedwoodLayers().map((l) => l.id)).toEqual(['ground', 'trunk', 'branches', 'crown'])
 
     expect(buildBareLayers().every((l) => l.shapes.length > 0)).toBe(true)
@@ -72,14 +72,20 @@ describe('isValidTreeTier', () => {
     expect(bare.find((l) => l.id === 'snow')?.animation?.type).toBe('drift')
 
     const oak = buildOakLayers()
-    expect(oak.find((l) => l.id === 'highlights')?.animation?.type).toBe('pulse')
+    expect(oak.find((l) => l.id === 'highlights')?.animation?.type).toBe('twinkle')
+    expect(oak.find((l) => l.id === 'leaf-fall')?.animation?.type).toBe('fall')
 
     const redwood = buildRedwoodLayers()
-    expect(redwood.find((l) => l.id === 'crown')?.animation?.type).toBe('pulse')
+    expect(redwood.find((l) => l.id === 'branches')?.animation?.type).toBe('sway')
+    expect(redwood.find((l) => l.id === 'crown')?.animation?.type).toBe('twinkle')
+
+    const bareExtended = buildBareLayers()
+    expect(bareExtended.find((l) => l.id === 'branches')?.animation?.type).toBe('sway')
+    expect(bareExtended.find((l) => l.id === 'snowfall')?.animation?.type).toBe('fall')
   })
 
   test('buildTreeLayers returns correct layers for all tiers', () => {
-    expect(buildTreeLayers(0).map((l) => l.id)).toEqual(['ground', 'trunk', 'branches', 'snow'])
+    expect(buildTreeLayers(0).map((l) => l.id)).toEqual(['ground', 'trunk', 'branches', 'snow', 'snowfall'])
     expect(buildTreeLayers(1).find((l) => l.id === 'petals')).toBeDefined()
     expect(buildTreeLayers(2).find((l) => l.id === 'strands')).toBeDefined()
     expect(buildTreeLayers(3).find((l) => l.id === 'highlights')).toBeDefined()

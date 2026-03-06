@@ -71,8 +71,8 @@ export function buildRedwoodLayers(): TreeLayer[] {
   return [
     { id: 'ground',   shapes: ground },
     { id: 'trunk',    shapes: trunk },
-    { id: 'branches', shapes: branches },
-    { id: 'crown',    shapes: crown, animation: { type: 'pulse', duration: 6 } },
+    { id: 'branches', shapes: branches, animation: { type: 'sway',    duration: 8 } },
+    { id: 'crown',    shapes: crown,    animation: { type: 'twinkle', duration: 2 } },
   ];
 }
 
