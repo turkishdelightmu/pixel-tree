@@ -154,7 +154,7 @@ export default function HomePage() {
       <div className="bg-panel border-2 border-border p-9 mb-[60px] flex gap-11 items-center flex-wrap">
         <div className="relative shrink-0 w-[120px] h-[150px] flex items-center justify-center bg-text/5 dark:bg-black/40 border-2 border-border">
           {activeUser && imgStatus === 'loaded' && (
-            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 font-pixel text-[6px] px-[6px] py-[3px] dark:bg-black/80 bg-panel/90 tracking-[1px]"
+            <span className="absolute bottom-1 left-1/2 -translate-x-1/2 font-pixel text-[6px] px-[6px] py-[3px] bg-panel tracking-[1px]"
               style={{ color: 'var(--color-accent)', border: '1px solid color-mix(in srgb, var(--color-accent) 27%, transparent)' }}>
               ANIMATED
             </span>
