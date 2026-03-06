@@ -124,7 +124,7 @@ This roadmap is based on planned PDR future updates.
 
 | Version | Feature        | Description                                                                      |
 | ------- | -------------- | -------------------------------------------------------------------------------- |
-| v1.1    | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal |
+| ✅ v1.1 | Animated SVGs  | Falling petals for Sakura, swaying strands for Willow, glowing pulse for Crystal |
 | v1.2    | Theme System   | Light / dark / forest / night background themes via `?theme=` param              |
 | v1.3    | Custom Tiers   | User-configurable tier thresholds via query params                               |
 | v2.0    | Streak Mode    | Tree health also factors in current streak (days in a row with commits)          |
